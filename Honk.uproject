@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{B85C930A-4EAE-91A1-2B9E-5F9A760EC93C}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Honk",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "PhysXVehicles",
+			"Enabled": true
+		},
+		{
+			"Name": "RawInput",
+			"Enabled": true
+		}
+	]
+}
