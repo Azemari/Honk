@@ -5,8 +5,8 @@
 4. Success
 
 **How to Push Work**
-1.git commit -m <commit msg>
-2.git push origin <branch>
+1. git commit -m commit "msg"  
+2. git push origin "branch"
 
 **How to Pull work**
-git pull <branch>
+1. git pull "branch"
