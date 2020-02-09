@@ -41,7 +41,7 @@ void AHonkHud::DrawHUD()
 	{
 		// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
 		AHonkPawn* Vehicle = Cast<AHonkPawn>(GetOwningPawn());
-		if ((Vehicle != nullptr) && (Vehicle->bInCarCameraActive == false))
+		if (Vehicle != nullptr)
 		{
 			FVector2D ScaleVec(HUDYRatio * 1.4f, HUDYRatio * 1.4f);
 

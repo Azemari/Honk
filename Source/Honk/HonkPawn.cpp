@@ -5,8 +5,6 @@
 #include "HonkWheelRear.h"
 #include "HonkHud.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "WheeledVehicleMovementComponent4W.h"
 #include "Engine/SkeletalMesh.h"
@@ -61,35 +59,6 @@ AHonkPawn::AHonkPawn()
 	Vehicle4W->WheelSetups[3].BoneName = FName("Wheel_Rear_Right");
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 12.f, 0.f);
 
-	// Create a spring arm component
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
-	SpringArm->TargetOffset = FVector(0.f, 0.f, 200.f);
-	SpringArm->SetRelativeRotation(FRotator(-15.f, 0.f, 0.f));
-	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 600.0f;
-	SpringArm->bEnableCameraRotationLag = true;
-	SpringArm->CameraRotationLagSpeed = 7.f;
-	SpringArm->bInheritPitch = false;
-	SpringArm->bInheritRoll = false;
-
-	// Create camera component 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera0"));
-	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-	Camera->bUsePawnControlRotation = false;
-	Camera->FieldOfView = 90.f;
-
-	// Create In-Car camera component 
-	InternalCameraOrigin = FVector(0.0f, -40.0f, 120.0f);
-
-	InternalCameraBase = CreateDefaultSubobject<USceneComponent>(TEXT("InternalCameraBase"));
-	InternalCameraBase->SetRelativeLocation(InternalCameraOrigin);
-	InternalCameraBase->SetupAttachment(GetMesh());
-
-	InternalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("InternalCamera"));
-	InternalCamera->bUsePawnControlRotation = false;
-	InternalCamera->FieldOfView = 90.f;
-	InternalCamera->SetupAttachment(InternalCameraBase);
-
 	//Setup TextRenderMaterial
 	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
 	
@@ -136,9 +105,6 @@ void AHonkPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed, this, &AHonkPawn::OnHandbrakePressed);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AHonkPawn::OnHandbrakeReleased);
-	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &AHonkPawn::OnToggleCamera);
-
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AHonkPawn::OnResetVR); 
 }
 
 void AHonkPawn::MoveForward(float Val)
@@ -161,35 +127,6 @@ void AHonkPawn::OnHandbrakeReleased()
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);
 }
 
-void AHonkPawn::OnToggleCamera()
-{
-	EnableIncarView(!bInCarCameraActive);
-}
-
-void AHonkPawn::EnableIncarView(const bool bState, const bool bForce)
-{
-	if ((bState != bInCarCameraActive) || ( bForce == true ))
-	{
-		bInCarCameraActive = bState;
-		
-		if (bState == true)
-		{
-			OnResetVR();
-			Camera->Deactivate();
-			InternalCamera->Activate();
-		}
-		else
-		{
-			InternalCamera->Deactivate();
-			Camera->Activate();
-		}
-		
-		InCarSpeed->SetVisibility(bInCarCameraActive);
-		InCarGear->SetVisibility(bInCarCameraActive);
-	}
-}
-
-
 void AHonkPawn::Tick(float Delta)
 {
 	Super::Tick(Delta);
@@ -210,39 +147,11 @@ void AHonkPawn::Tick(float Delta)
 		bHMDActive = true;
 	}
 #endif // HMD_MODULE_INCLUDED
-	if (bHMDActive == false)
-	{
-		if ( (InputComponent) && (bInCarCameraActive == true ))
-		{
-			FRotator HeadRotation = InternalCamera->GetRelativeRotation();
-			HeadRotation.Pitch += InputComponent->GetAxisValue(LookUpBinding);
-			HeadRotation.Yaw += InputComponent->GetAxisValue(LookRightBinding);
-			InternalCamera->SetRelativeRotation(HeadRotation);
-		}
-	}
 }
 
 void AHonkPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	bool bEnableInCar = false;
-#if HMD_MODULE_INCLUDED
-	bEnableInCar = UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled();
-#endif // HMD_MODULE_INCLUDED
-	EnableIncarView(bEnableInCar,true);
-}
-
-void AHonkPawn::OnResetVR()
-{
-#if HMD_MODULE_INCLUDED
-	if (GEngine->XRSystem.IsValid())
-	{
-		GEngine->XRSystem->ResetOrientationAndPosition();
-		InternalCamera->SetRelativeLocation(InternalCameraOrigin);
-		GetController()->SetControlRotation(FRotator());
-	}
-#endif // HMD_MODULE_INCLUDED
 }
 
 void AHonkPawn::UpdateHUDStrings()
