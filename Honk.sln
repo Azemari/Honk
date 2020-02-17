@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Honk", "Intermediate\Projec
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{92559A2A-7EE1-44B9-B987-BDED42B5CD08}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis = ..\..\..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis
+		..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis = ..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis
 	EndProjectSection
 EndProject
 Global
@@ -31,6 +31,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.DebugGame Editor|Win32.ActiveCfg = BuiltWithUnrealBuildTool|Win32
+		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.DebugGame Editor|Win32.Build.0 = BuiltWithUnrealBuildTool|Win32
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.DebugGame Editor|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win32
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.DebugGame|Win32.ActiveCfg = BuiltWithUnrealBuildTool|Win32
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.DebugGame|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win32
@@ -40,7 +41,8 @@ Global
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.Development|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win32
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.Shipping|Win32.ActiveCfg = BuiltWithUnrealBuildTool|Win32
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64}.Shipping|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win32
-		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame Editor|Win32.ActiveCfg = Invalid|Win32
+		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame Editor|Win32.ActiveCfg = DebugGame_Editor|Win32
+		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame Editor|Win32.Build.0 = DebugGame_Editor|Win32
 		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame Editor|Win64.ActiveCfg = DebugGame_Editor|x64
 		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame Editor|Win64.Build.0 = DebugGame_Editor|x64
 		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82}.DebugGame|Win32.ActiveCfg = DebugGame|Win32
@@ -65,5 +67,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{40A05F27-5D42-446B-9C2A-7A57C06C0C64} = {3CC17550-6E48-4485-A2EE-99F5C0161F6C}
 		{1B6D2554-BD5F-48F4-AED7-1A57000AAE82} = {B006E782-1A23-4A64-BA4A-9A28CFC60C82}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3A31431-1EE3-4C09-B4A0-29330FB89BE7}
 	EndGlobalSection
 EndGlobal
