@@ -24,7 +24,18 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
-	float MaxAcceleration = 10.0f;
+	float MaxAccelerationForward = 10.0f;
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float RateOfAccellerationForward = 2.5f;
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float MaxForwardVelocity = 32.0f;
+
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float MaxAccelerationBackward = 5.0f;
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float RateOfAccellerationBackward = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float MaxBackwardVelocity = 9.0f;
 
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float CoastingDeceleration = 1.0f;
@@ -32,17 +43,36 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float BrakingDeceleration = 20.0f;
 
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float MaxTurnRateDegrees = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "CarStats")
+	float VelocityForMaxTurnRate = 5.0f;
+
 private:
 
-	float ForwardVelocity = 0;
+	float Velocity = 0;
+
+	float MaxAccelerationForwardUU = 0.0f;
+	float RateOfAccellerationForwardUU = 2.5f;
+	float MaxForwardVelocityUU = 32.0f;
+
+	float MaxAccelerationBackwardUU = 5.0f;
+	float RateOfAccellerationBackwardUU = 1.0f;
+	float MaxBackwardVelocityUU = 9.0f;
 
 	float CoastingDecelerationUU = 0.0f;
 	float BrakingDecelerationUU = 0.0f;
-	float MaxAccelerationUU = 0.0f;
+	
+	float VelocityForMaxTurnRateUU = 5.0f;
+
+	float Accelleration;
 
 	float ThrottleInput = 0;
 	float SteeringInput = 0;
 	bool bIsHandbrakeActive = false;
+
+	bool bWasThrottlingForward = false;
 
 	const float METRE_TO_UU = 100.f;
 };

@@ -6,7 +6,16 @@
 void UHonkMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	MaxAccelerationUU = MaxAcceleration * METRE_TO_UU;
+	MaxAccelerationForwardUU = MaxAccelerationForward * METRE_TO_UU;
+	RateOfAccellerationForwardUU = RateOfAccellerationForward * METRE_TO_UU;
+	MaxForwardVelocityUU = MaxForwardVelocity * METRE_TO_UU;
+
+	MaxAccelerationBackwardUU = MaxAccelerationBackward * METRE_TO_UU;
+	RateOfAccellerationBackwardUU = RateOfAccellerationBackward * METRE_TO_UU;
+	MaxBackwardVelocityUU = MaxBackwardVelocity * METRE_TO_UU;
+
+	VelocityForMaxTurnRateUU = VelocityForMaxTurnRate * METRE_TO_UU;
+
 	BrakingDecelerationUU = BrakingDeceleration * METRE_TO_UU;
 	CoastingDecelerationUU = CoastingDeceleration * METRE_TO_UU;
 }
@@ -16,29 +25,90 @@ void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (ThrottleInput > 0)
 	{
-		ForwardVelocity += MaxAccelerationUU * DeltaTime;
+		bWasThrottlingForward = true;
+
+		if (Accelleration < 0)
+		{
+			Accelleration = 0;
+		}
+
+		Accelleration += RateOfAccellerationForwardUU;
+		if (Accelleration > MaxAccelerationForwardUU)
+		{
+			Accelleration = MaxAccelerationForwardUU;
+		}
+
+		Velocity += Accelleration * ThrottleInput * DeltaTime;
+		if (Velocity > MaxForwardVelocityUU)
+		{
+			Velocity = MaxForwardVelocityUU;
+		}
 	}
 	else if (ThrottleInput < 0)
 	{
-		if (ForwardVelocity > 0)
+		if (Accelleration > 0)
 		{
-			ForwardVelocity -= BrakingDecelerationUU * DeltaTime;
+			Accelleration = 0;
+		}
+
+		if (Velocity > 0)
+		{
+			Velocity += BrakingDecelerationUU * ThrottleInput * DeltaTime;
 		}
 		else
 		{
-			ForwardVelocity -= MaxAccelerationUU * DeltaTime;
+			bWasThrottlingForward = false;
+			Accelleration -= RateOfAccellerationBackwardUU;
+			if (Accelleration < -1.0f * RateOfAccellerationBackwardUU)
+			{
+				Accelleration = -1.0f * RateOfAccellerationBackwardUU;
+			}
+
+			Velocity -= Accelleration * ThrottleInput * DeltaTime;
+			if (Velocity < MaxBackwardVelocityUU * -1.f)
+			{
+				Velocity = MaxBackwardVelocityUU * -1.f;
+			}
 		}
 	}
 	else
 	{
-		ForwardVelocity -= CoastingDecelerationUU * DeltaTime;
-		if (ForwardVelocity < 0)
+		Accelleration = 0;
+		if (bWasThrottlingForward)
 		{
-			ForwardVelocity = 0;
+			Velocity -= CoastingDecelerationUU * DeltaTime;
+			if (Velocity < 0)
+			{
+				Velocity = 0;
+			}
+		}
+		else
+		{
+			Velocity += CoastingDecelerationUU * DeltaTime;
+			if (Velocity > 0)
+			{
+				Velocity = 0;
+			}
 		}
 	}
 
-	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += GetOwner()->GetActorForwardVector() * ForwardVelocity);
+	if (Velocity != 0.0f)
+	{
+		FRotator NewRot = GetOwner()->GetActorRotation();
+		float VelocityTurnMult = 1.0f;
+		if (Velocity < 0.0f)
+		{
+			VelocityTurnMult = (Velocity / VelocityForMaxTurnRateUU);
+		}
+		else
+		{
+			VelocityTurnMult = (Velocity / VelocityForMaxTurnRateUU);
+		}
+		NewRot.Add(0.0f, MaxTurnRateDegrees * SteeringInput * DeltaTime * VelocityTurnMult, 0.0f);
+		GetOwner()->SetActorRotation(NewRot);
+	}
+
+	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += GetOwner()->GetActorForwardVector() * Velocity);
 }
 
 void UHonkMovementComponent::SetThrottleInput(float Val)
