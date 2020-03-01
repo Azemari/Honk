@@ -43,11 +43,23 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float BrakingDeceleration = 20.0f;
 
+
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float MaxTurnRateDegrees = 1.0f;
 
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float VelocityForMaxTurnRate = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Drifting")
+	float HandbrakeDeceleration = 40.0f;
+	UPROPERTY(EditAnywhere, Category = "Drifting")
+	float MaxDriftTurnRateDegrees = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "Drifting")
+	float VelocityForMaxDriftTurnRate = 5.0f;
+	UPROPERTY(EditAnywhere, Category = "Drifting")
+	float HandbrakeAccellerationBuildup = 5.0f;
+	UPROPERTY(EditAnywhere, Category = "Drifting")
+	float HandbrakeAccellerationCap = 5.0f;
 
 private:
 
@@ -63,8 +75,10 @@ private:
 
 	float CoastingDecelerationUU = 0.0f;
 	float BrakingDecelerationUU = 0.0f;
+	float HandbrakeDecelerationUU = 0.0f;
 	
 	float VelocityForMaxTurnRateUU = 5.0f;
+	float VelocityForMaxDriftTurnRateUU = 5.0f;
 
 	float Accelleration;
 
@@ -72,7 +86,18 @@ private:
 	float SteeringInput = 0;
 	bool bIsHandbrakeActive = false;
 
+	
+	float HandbrakeAccellerationBuildupUU = 0.0f;
+	float HandbrakeAccellerationCapUU = 0.0f;
+
+	float LeftOverDriftVelocity = 0.0f;
+
 	bool bWasThrottlingForward = false;
 
+	void HandleThrottleMovement(float DeltaTime);
+	void HandleHandbrakeMovement(float DeltaTime, float& VelocityToUse);
+
 	const float METRE_TO_UU = 100.f;
+
+	FVector HandbrakeDirection = FVector::ZeroVector;
 };

@@ -17,12 +17,34 @@ void UHonkMovementComponent::BeginPlay()
 	VelocityForMaxTurnRateUU = VelocityForMaxTurnRate * METRE_TO_UU;
 
 	BrakingDecelerationUU = BrakingDeceleration * METRE_TO_UU;
+	HandbrakeDecelerationUU = HandbrakeDeceleration * METRE_TO_UU;
 	CoastingDecelerationUU = CoastingDeceleration * METRE_TO_UU;
+
+	HandbrakeAccellerationBuildupUU = HandbrakeAccellerationBuildup * METRE_TO_UU;
+	HandbrakeAccellerationCapUU = HandbrakeAccellerationCap * METRE_TO_UU;
+
+	VelocityForMaxDriftTurnRateUU = VelocityForMaxDriftTurnRate * METRE_TO_UU;
 }
 
 void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (bIsHandbrakeActive)
+	{
+		HandleHandbrakeMovement(DeltaTime, Velocity);
+	}
+	else
+	{
+		HandleThrottleMovement(DeltaTime);
+		if (LeftOverDriftVelocity != 0.0f)
+		{
+			HandleHandbrakeMovement(DeltaTime, LeftOverDriftVelocity);
+		}
+	}
+}
+
+void UHonkMovementComponent::HandleThrottleMovement(float DeltaTime)
+{
 	if (ThrottleInput > 0)
 	{
 		bWasThrottlingForward = true;
@@ -95,20 +117,56 @@ void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	if (Velocity != 0.0f)
 	{
 		FRotator NewRot = GetOwner()->GetActorRotation();
-		float VelocityTurnMult = 1.0f;
-		if (Velocity < 0.0f)
-		{
-			VelocityTurnMult = (Velocity / VelocityForMaxTurnRateUU);
-		}
-		else
-		{
-			VelocityTurnMult = (Velocity / VelocityForMaxTurnRateUU);
-		}
+		float VelocityTurnMult = (Velocity / VelocityForMaxTurnRateUU);
+	
 		NewRot.Add(0.0f, MaxTurnRateDegrees * SteeringInput * DeltaTime * VelocityTurnMult, 0.0f);
 		GetOwner()->SetActorRotation(NewRot);
 	}
+	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += GetOwner()->GetActorForwardVector() * Velocity * DeltaTime);
+}
 
-	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += GetOwner()->GetActorForwardVector() * Velocity);
+void UHonkMovementComponent::HandleHandbrakeMovement(float DeltaTime, float& VelocityToUse)
+{
+	if (VelocityToUse != 0.0f)
+	{
+		Accelleration = 0.0f;
+		FRotator NewRot = GetOwner()->GetActorRotation();
+		float VelocityTurnMult = (VelocityToUse / VelocityForMaxDriftTurnRateUU);
+
+		NewRot.Add(0.0f, MaxDriftTurnRateDegrees * SteeringInput * DeltaTime * VelocityTurnMult, 0.0f);
+		GetOwner()->SetActorRotation(NewRot);
+		
+		if (VelocityToUse > 0.0f)
+		{
+			VelocityToUse -= HandbrakeDecelerationUU * DeltaTime;
+			if (VelocityToUse < 0.0f)
+			{
+				VelocityToUse = 0.0f;
+			}
+		}
+		else
+		{
+			VelocityToUse += HandbrakeDecelerationUU * DeltaTime;
+			if (VelocityToUse > 0.0f)
+			{
+				VelocityToUse = 0.0f;
+			}
+		}
+
+		GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += HandbrakeDirection * VelocityToUse * DeltaTime);
+	}
+	else if (ThrottleInput != 0)
+	{
+		Accelleration += HandbrakeAccellerationBuildupUU * DeltaTime * ThrottleInput;
+		if (Accelleration > HandbrakeAccellerationCapUU)
+		{
+			Accelleration = HandbrakeAccellerationCapUU;
+		}
+		else if (Accelleration < -HandbrakeAccellerationCapUU)
+		{
+			Accelleration = HandbrakeAccellerationCapUU * -1.0f;
+		}
+	}
 }
 
 void UHonkMovementComponent::SetThrottleInput(float Val)
@@ -124,4 +182,13 @@ void UHonkMovementComponent::SetSteeringInput(float Val)
 void UHonkMovementComponent::SetHandbrakeInput(bool bIsBraking)
 {
 	bIsHandbrakeActive = bIsBraking;
+	if (bIsHandbrakeActive)
+	{
+		HandbrakeDirection = GetOwner()->GetActorForwardVector();
+	}
+	else
+	{
+		LeftOverDriftVelocity = Velocity;
+		Velocity = 0.0f;	
+	}
 }
