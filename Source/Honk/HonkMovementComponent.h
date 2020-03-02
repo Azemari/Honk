@@ -21,7 +21,7 @@ public:
 	void SetThrottleInput(float Val);
 	void SetSteeringInput(float Val);
 	void SetHandbrakeInput(bool bIsBraking);
-
+	void SetIsDrifting(bool bDrifting);
 protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float MaxAccelerationForward = 10.0f;
@@ -57,9 +57,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Drifting")
 	float VelocityForMaxDriftTurnRate = 5.0f;
 	UPROPERTY(EditAnywhere, Category = "Drifting")
-	float HandbrakeAccellerationBuildup = 5.0f;
+	float DriftStartTurnMultiplier = 1.5f;
 	UPROPERTY(EditAnywhere, Category = "Drifting")
-	float HandbrakeAccellerationCap = 5.0f;
+	float MinimumDriftStartVelocity = 25.0f;
 
 private:
 
@@ -76,28 +76,29 @@ private:
 	float CoastingDecelerationUU = 0.0f;
 	float BrakingDecelerationUU = 0.0f;
 	float HandbrakeDecelerationUU = 0.0f;
-	
+
+	float LeftOverDriftVelocity = 0.0f;
+
 	float VelocityForMaxTurnRateUU = 5.0f;
 	float VelocityForMaxDriftTurnRateUU = 5.0f;
+	float MinimumDriftStartVelocityUU = 0.0f;
 
 	float Accelleration;
 
 	float ThrottleInput = 0;
 	float SteeringInput = 0;
 	bool bIsHandbrakeActive = false;
+	bool bIsDrifting = false;
 
-	
-	float HandbrakeAccellerationBuildupUU = 0.0f;
-	float HandbrakeAccellerationCapUU = 0.0f;
-
-	float LeftOverDriftVelocity = 0.0f;
+	float DriftTurn = 0.0f;
 
 	bool bWasThrottlingForward = false;
 
+	void HandleThrottleForwardMovement(float DeltaTime);
 	void HandleThrottleMovement(float DeltaTime);
-	void HandleHandbrakeMovement(float DeltaTime, float& VelocityToUse);
+	void HandleDrifting(float DeltaTime);
 
 	const float METRE_TO_UU = 100.f;
 
-	FVector HandbrakeDirection = FVector::ZeroVector;
+	FVector DriftDirection = FVector::ZeroVector;
 };
