@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.24",
+	"EngineAssociation": "{F5D7225F-4EF1-0DFF-7F1B-669A7CD40AF2}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "Honk",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [
