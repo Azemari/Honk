@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Engine/SkeletalMesh.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "HonkPawn.generated.h"
 
 
@@ -41,11 +41,14 @@ public:
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
 
-	USkeletalMesh* Mesh = nullptr;
+	USkeletalMeshComponent* carMesh = nullptr;
+	USkeletalMeshComponent* weaponMesh = nullptr;
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class UHonkMovementComponent* MovComp = nullptr;
+	class UHonkMovementComponent* MovComp    = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UHonkWeaponComponent*   WeaponComp = nullptr;
 	/* Are we on a 'slippery' surface */
 	bool bIsLowFriction;
 };

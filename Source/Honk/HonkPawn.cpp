@@ -1,9 +1,9 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "HonkPawn.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "HonkMovementComponent.h"
+#include "HonkWeaponComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
@@ -14,12 +14,6 @@
 #ifndef HMD_MODULE_INCLUDED
 #define HMD_MODULE_INCLUDED 0
 #endif
-
-// Needed for VR Headset
-#if HMD_MODULE_INCLUDED
-#include "IXRTrackingSystem.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
-#endif // HMD_MODULE_INCLUDED
 
 const FName AHonkPawn::LookUpBinding("LookUp");
 const FName AHonkPawn::LookRightBinding("LookRight");
@@ -35,9 +29,9 @@ AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 {
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
 
-	// Temp
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
-	Mesh = CarMesh.Object;
+	//// Temp
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
+	//Mesh = CarMesh.Object;
 
 	/*static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Vehicle/Sedan/Sedan_AnimBP"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);*/
