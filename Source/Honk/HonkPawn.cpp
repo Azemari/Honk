@@ -27,6 +27,7 @@ void AHonkPawn::BeginPlay()
 
 AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 {
+	WeaponComp = CreateDefaultSubobject<UHonkWeaponComponent>(TEXT("WeaponComp"));
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
 
 	//// Temp
