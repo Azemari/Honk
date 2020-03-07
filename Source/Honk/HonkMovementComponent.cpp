@@ -82,7 +82,11 @@ void UHonkMovementComponent::HandleThrottleForwardMovement(float DeltaTime)
 	}
 	else
 	{
-		Velocity = 0.0f;
+		Velocity -= HandbrakeDecelerationUU * DeltaTime;
+		if (Velocity < 0)
+		{
+			Velocity = 0;
+		}
 	}
 }
 
@@ -92,6 +96,25 @@ void UHonkMovementComponent::HandleThrottleMovement(float DeltaTime)
 	{
 		bWasThrottlingForward = true;
 		HandleThrottleForwardMovement(DeltaTime);		
+	}
+	else if (bIsHandbrakeActive)
+	{
+		if (Velocity > 0.0f)
+		{
+			Velocity -= HandbrakeDecelerationUU * DeltaTime;
+			if (Velocity < 0)
+			{
+				Velocity = 0;
+			}
+		}
+		else
+		{
+			Velocity += HandbrakeDecelerationUU * DeltaTime;
+			if (Velocity > 0)
+			{
+				Velocity = 0;
+			}
+		}
 	}
 	else if (ThrottleInput < 0)
 	{
