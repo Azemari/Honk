@@ -30,10 +30,15 @@ UHonkWeaponComponent::~UHonkWeaponComponent()
 void UHonkWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	checkf(false, TEXT("Overload fire function in child, ya goon"));
+	
 
 	// ...
 	
+}
+
+void Fire()
+{
+    checkf(false, TEXT("Overload fire function in child, ya goon"));
 }
 
 
