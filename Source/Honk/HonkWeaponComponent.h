@@ -17,16 +17,20 @@ public:
 	// Sets default values for this component's properties
 	UHonkWeaponComponent();
 	~UHonkWeaponComponent();
-	// Called when the game starts
+	// Unreal Functions
 	virtual void BeginPlay() override;
-    void Fire();
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	USkeletalMeshComponent* GetMesh() { return weaponMesh; }
+
+    // Class Functions
+    void Fire();
+	
+    // Getters and Setters
+    USkeletalMeshComponent* GetMesh() { return weaponMesh; }
+    void SetTriggerInput(bool state){ trigger = state; }
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "WeaponStats")
-	float fireRate = 10;
+	float fireRate = 5;
 	UPROPERTY(EditAnywhere, Category = "WeaponStats")
 	float aiminngAngle = 360;
 	UPROPERTY(EditAnywhere, Category = "WeaponStats")
@@ -48,7 +52,8 @@ protected:
 	USkeletalMeshComponent* weaponMesh = nullptr;
 
 private:
-	float lastFired;
-
+    bool trigger = false;
+	float lastFired = 0;
+    int shot = 0;
 		
 };

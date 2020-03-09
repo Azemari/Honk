@@ -30,23 +30,28 @@ UHonkWeaponComponent::~UHonkWeaponComponent()
 void UHonkWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-
 	// ...
 	
 }
-
-void Fire()
-{
-    checkf(false, TEXT("Overload fire function in child, ya goon"));
-}
-
 
 // Called every frame
 void UHonkWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+    if (trigger && lastFired <=0)
+    { 
+        Fire(); 
+    }
+    if (lastFired > 0)
+    {
+        lastFired -= DeltaTime;
+    }
 }
 
+void UHonkWeaponComponent::Fire()
+{
+    shot += 1;
+    lastFired = 1/fireRate;
+    UE_LOG(LogTemp, Warning, TEXT("%d"),shot);
+    //checkf(false, TEXT("Overload fire function in child, ya goon"));
+}

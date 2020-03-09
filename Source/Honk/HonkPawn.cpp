@@ -30,9 +30,11 @@ AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 	WeaponComp = CreateDefaultSubobject<UHonkWeaponComponent>(TEXT("WeaponComp"));
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
 
-	//// Temp
-	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
-	//Mesh = CarMesh.Object;
+	// Temp
+	static ConstructorHelpers::FObjectFinder<USkeletalMeshComponent> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
+	carMesh = CarMesh.Object;
+
+	weaponMesh = WeaponComp->GetMesh();
 
 	/*static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Vehicle/Sedan/Sedan_AnimBP"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);*/
@@ -50,6 +52,8 @@ void AHonkPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed, this, &AHonkPawn::OnHandbrakePressed);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AHonkPawn::OnHandbrakeReleased);
+    PlayerInputComponent->BindAction("Trigger", IE_Pressed, this, &AHonkPawn::OnTriggerPressed);
+    PlayerInputComponent->BindAction("Trigger", IE_Released, this, &AHonkPawn::OnTriggerReleased);
 }
 
 void AHonkPawn::MoveForward(float Val)
@@ -70,6 +74,16 @@ void AHonkPawn::OnHandbrakePressed()
 void AHonkPawn::OnHandbrakeReleased()
 {
 	MovComp->SetHandbrakeInput(false);
+}
+
+void AHonkPawn::OnTriggerPressed()
+{
+    WeaponComp->SetTriggerInput(true);
+}
+
+void AHonkPawn::OnTriggerReleased()
+{
+	WeaponComp->SetTriggerInput(false);
 }
 
 void AHonkPawn::Tick(float Delta)

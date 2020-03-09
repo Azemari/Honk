@@ -37,6 +37,10 @@ public:
 	void OnHandbrakePressed();
 	/** Handle handbrake released */
 	void OnHandbrakeReleased();
+    /** Handle trigger pressed */
+    void OnTriggerPressed();
+    /** Handle trigger released */
+    void OnTriggerReleased();
 
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
