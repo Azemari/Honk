@@ -57,6 +57,8 @@ void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 			GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += DriftDirection * LeftOverDriftVelocity * DeltaTime);
 		}
 	}
+	PrevFrameLocation = GetOwner()->GetActorLocation();
+	PrevFrameRotation = GetOwner()->GetActorRotation();
 }
 
 void UHonkMovementComponent::HandleThrottleForwardMovement(float DeltaTime)
@@ -253,4 +255,11 @@ void UHonkMovementComponent::SetIsDrifting(bool bDrifting)
 			Accelleration = 0.0f;
 		}
 	}
+}
+
+void UHonkMovementComponent::CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult)
+{
+	Velocity *= -CoefficientOfRestitution;
+	GetOwner()->SetActorLocation(PrevFrameLocation);
+	GetOwner()->SetActorRotation(PrevFrameRotation);
 }

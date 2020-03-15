@@ -22,6 +22,8 @@ public:
 	void SetSteeringInput(float Val);
 	void SetHandbrakeInput(bool bIsBraking);
 	void SetIsDrifting(bool bDrifting);
+	void CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult);
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
 	float MaxAccelerationForward = 10.0f;
@@ -60,6 +62,14 @@ protected:
 	float DriftStartTurnMultiplier = 1.5f;
 	UPROPERTY(EditAnywhere, Category = "Drifting")
 	float MinimumDriftStartVelocity = 25.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Collision")
+	float CoefficientOfRestitution = 0.3f;
+
+	UPROPERTY(Transient)
+	FVector PrevFrameLocation = FVector::ZeroVector;
+	UPROPERTY(Transient)
+	FRotator PrevFrameRotation = FRotator::ZeroRotator;
 
 private:
 

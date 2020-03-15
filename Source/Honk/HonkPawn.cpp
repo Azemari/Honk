@@ -6,6 +6,7 @@
 #include "HonkMovementComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/Engine.h"
+#include "Components/SceneComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextRenderComponent.h"
 #include "Materials/Material.h"
@@ -26,21 +27,30 @@ const FName AHonkPawn::LookRightBinding("LookRight");
 
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
-void AHonkPawn::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 {
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
 
-	// Temp
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
-	Mesh = CarMesh.Object;
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Car Mesh"));
+	Mesh->SetupAttachment(RootComponent);
 
-	/*static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Vehicle/Sedan/Sedan_AnimBP"));
-	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);*/
+	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(FName("Collision Mesh"));
+	CollisionComponent->SetupAttachment(Mesh);
+}
+
+void AHonkPawn::BeginPlay()
+{
+	Super::BeginPlay();
+	CollisionComponent->SetGenerateOverlapEvents(true);
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AHonkPawn::OnOverlapBegin);
+}
+
+void AHonkPawn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (MovComp)
+	{
+		MovComp->CollideWithWall(OtherActor, SweepResult);
+	}
 }
 
 void AHonkPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
