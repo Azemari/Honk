@@ -10,6 +10,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextRenderComponent.h"
 #include "Materials/Material.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Controller.h"
 
 #ifndef HMD_MODULE_INCLUDED
@@ -22,9 +23,6 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #endif // HMD_MODULE_INCLUDED
 
-const FName AHonkPawn::LookUpBinding("LookUp");
-const FName AHonkPawn::LookRightBinding("LookRight");
-
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
 AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
@@ -34,6 +32,9 @@ AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Car Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 
+    WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Weapon Mesh"));
+    WeaponMeshComp->SetupAttachment(Mesh, WeaponSocket);
+
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(FName("Collision Mesh"));
 	CollisionComponent->SetupAttachment(Mesh);
 }
@@ -41,6 +42,18 @@ AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 void AHonkPawn::BeginPlay()
 {
 	Super::BeginPlay();
+    
+    
+  
+    if(WeaponMeshComp)
+    {
+        if (WeaponMeshBase.IsPending())
+        {
+            WeaponMeshBase.LoadSynchronous();
+        }
+        WeaponMeshComp->SetSkeletalMesh(WeaponMeshBase.Get());
+    }
+
 	CollisionComponent->SetGenerateOverlapEvents(true);
 	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AHonkPawn::OnOverlapBegin);
 }
