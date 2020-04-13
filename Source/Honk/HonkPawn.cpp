@@ -49,7 +49,14 @@ void AHonkPawn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class 
 {
 	if (MovComp)
 	{
-		MovComp->CollideWithWall(OtherActor, SweepResult);
+		if (AHonkPawn* OtherCar = Cast<AHonkPawn>(OtherActor))
+		{
+			MovComp->CollideWithCar(OtherCar, SweepResult);
+		}
+		else
+		{
+			MovComp->CollideWithWall(OtherActor, SweepResult);
+		}
 	}
 }
 

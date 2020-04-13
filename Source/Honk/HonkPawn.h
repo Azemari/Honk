@@ -50,6 +50,8 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	class UHonkMovementComponent* GetMovComp() { return MovComp; }
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UHonkMovementComponent* MovComp = nullptr;

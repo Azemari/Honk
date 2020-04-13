@@ -23,6 +23,7 @@ public:
 	void SetHandbrakeInput(bool bIsBraking);
 	void SetIsDrifting(bool bDrifting);
 	void CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult);
+	void CollideWithCar(class AHonkPawn* OtherActor, const FHitResult& SweepResult);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
@@ -65,6 +66,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Collision")
 	float CoefficientOfRestitution = 0.3f;
+	UPROPERTY(EditAnywhere, Category = "Collision")
+	float CarMass = 50.0f;
 
 	UPROPERTY(Transient)
 	FVector PrevFrameLocation = FVector::ZeroVector;
@@ -105,10 +108,16 @@ private:
 	bool bWasThrottlingForward = false;
 
 	void HandleThrottleForwardMovement(float DeltaTime);
+	void HandleCollisionMovement(float DeltaTime);
 	void HandleThrottleMovement(float DeltaTime);
 	void HandleDrifting(float DeltaTime);
 
 	const float METRE_TO_UU = 100.f;
+
+	UPROPERTY(Transient)
+	FVector CollisionVelocity = FVector::ZeroVector;
+	UPROPERTY(Transient)
+	FVector CollisionDeceleration = FVector(500, 500, 0);
 
 	FVector DriftDirection = FVector::ZeroVector;
 };

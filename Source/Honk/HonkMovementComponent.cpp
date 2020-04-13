@@ -2,6 +2,7 @@
 
 
 #include "HonkMovementComponent.h"
+#include "HonkPawn.h"
 
 void UHonkMovementComponent::BeginPlay()
 {
@@ -57,8 +58,53 @@ void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 			GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() += DriftDirection * LeftOverDriftVelocity * DeltaTime);
 		}
 	}
+	
+	if (CollisionVelocity != FVector::ZeroVector)
+	{
+		HandleCollisionMovement(DeltaTime);
+	}
+
 	PrevFrameLocation = GetOwner()->GetActorLocation();
 	PrevFrameRotation = GetOwner()->GetActorRotation();
+}
+
+void UHonkMovementComponent::HandleCollisionMovement(float DeltaTime)
+{
+	GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + (CollisionVelocity * DeltaTime));
+
+	if (CollisionVelocity.X < 0.0f)
+	{
+		CollisionVelocity.X += CollisionDeceleration.X;
+		if (CollisionVelocity.X > 0.0f)
+		{
+			CollisionVelocity.X = 0.0f;
+		}
+	}
+	else if (CollisionVelocity.X > 0.0f)
+	{
+		CollisionVelocity.X -= CollisionDeceleration.X;
+		if (CollisionVelocity.X < 0.0f)
+		{
+			CollisionVelocity.X = 0.0f;
+		}
+	}
+
+	if (CollisionVelocity.Y < 0.0f)
+	{
+		CollisionVelocity.Y += CollisionDeceleration.Y;
+		if (CollisionVelocity.Y > 0.0f)
+		{
+			CollisionVelocity.Y = 0.0f;
+		}
+	}
+	else if (CollisionVelocity.Y > 0.0f)
+	{
+		CollisionVelocity.Y -= CollisionDeceleration.Y;
+		if (CollisionVelocity.Y < 0.0f)
+		{
+			CollisionVelocity.Y = 0.0f;
+		}
+	}
 }
 
 void UHonkMovementComponent::HandleThrottleForwardMovement(float DeltaTime)
@@ -262,4 +308,25 @@ void UHonkMovementComponent::CollideWithWall(class AActor* OtherActor, const FHi
 	Velocity *= -CoefficientOfRestitution;
 	GetOwner()->SetActorLocation(PrevFrameLocation);
 	GetOwner()->SetActorRotation(PrevFrameRotation);
+}
+
+void UHonkMovementComponent::CollideWithCar(class AHonkPawn* OtherActor, const FHitResult& SweepResult)
+{
+	if (UHonkMovementComponent* OtherMovComp = OtherActor->GetMovComp())
+	{
+		//figure out if the collision is head/butt on, or if one car has been T-Boned
+
+		FVector CollNormal = OtherActor->GetActorLocation() - GetOwner()->GetActorLocation();
+		CollNormal.Normalize();
+		
+
+		//calc winner of collision based on momentum
+
+		float MassRatio = CarMass / OtherMovComp->CarMass;
+		OtherMovComp->CollisionVelocity = Velocity * CollNormal * 5 * MassRatio;
+		CollNormal *= -1.0f;
+		CollisionVelocity = (OtherMovComp->Velocity * CollNormal * 5) / MassRatio;
+		Velocity *= CoefficientOfRestitution;
+		OtherMovComp->Velocity *= OtherMovComp->CoefficientOfRestitution;
+	}
 }
