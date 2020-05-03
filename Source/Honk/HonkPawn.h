@@ -27,16 +27,17 @@ protected:
 public:
 	// End Actor interface
 
-	/** Handle pressing forwards */
+	/** Movement Functions */
 	void MoveForward(float Val);
-
-	/** Handle pressing right */
 	void MoveRight(float Val);
-	/** Handle handbrake pressed */
+
+	/** Handbrake Functions */
 	void OnHandbrakePressed();
-	/** Handle handbrake released */
 	void OnHandbrakeReleased();
 
+    /** Trigger Functions */
+    void OnTriggerPressed();
+    void OnTriggerReleased();
 
     UPROPERTY(VisibleAnywhere)
 	class USkeletalMeshComponent* Mesh = nullptr;
@@ -62,6 +63,8 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UHonkMovementComponent* MovComp = nullptr;
+	UPROPERTY(VisibleAnywhere)
+    class UHonkWeaponComponent* WeaponComp = nullptr;
 	/* Are we on a 'slippery' surface */
 	bool bIsLowFriction;
 };

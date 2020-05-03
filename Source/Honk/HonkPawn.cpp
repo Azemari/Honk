@@ -4,6 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "HonkMovementComponent.h"
+#include "HonkWeaponComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/Engine.h"
 #include "Components/SceneComponent.h"
@@ -13,21 +14,12 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/Controller.h"
 
-#ifndef HMD_MODULE_INCLUDED
-#define HMD_MODULE_INCLUDED 0
-#endif
-
-// Needed for VR Headset
-#if HMD_MODULE_INCLUDED
-#include "IXRTrackingSystem.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
-#endif // HMD_MODULE_INCLUDED
-
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
 AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 {
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
+	WeaponComp = CreateDefaultSubobject<UHonkWeaponComponent>(TEXT("WeaponComp"));
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Car Mesh"));
 	Mesh->SetupAttachment(RootComponent);
@@ -41,9 +33,7 @@ AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 
 void AHonkPawn::BeginPlay()
 {
-	Super::BeginPlay();
-    
-    
+	Super::BeginPlay();    
   
     if(WeaponMeshComp)
     {
@@ -85,6 +75,8 @@ void AHonkPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed, this, &AHonkPawn::OnHandbrakePressed);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AHonkPawn::OnHandbrakeReleased);
+    PlayerInputComponent->BindAction("Trigger", IE_Pressed, this, &AHonkPawn::OnTriggerPressed);
+    PlayerInputComponent->BindAction("Trigger", IE_Released, this, &AHonkPawn::OnTriggerReleased);
 }
 
 void AHonkPawn::MoveForward(float Val)
@@ -107,10 +99,19 @@ void AHonkPawn::OnHandbrakeReleased()
 	MovComp->SetHandbrakeInput(false);
 }
 
+void AHonkPawn::OnTriggerPressed()
+{
+    WeaponComp->SetTriggerStatus(true);
+}
+
+void AHonkPawn::OnTriggerReleased()
+{
+    WeaponComp->SetTriggerStatus(false);
+}
+
 void AHonkPawn::Tick(float Delta)
 {
 	Super::Tick(Delta);
-	
 }
 
 #undef LOCTEXT_NAMESPACE
