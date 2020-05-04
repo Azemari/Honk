@@ -18,17 +18,19 @@
 
 AHonkPawn::AHonkPawn(const FObjectInitializer& ObjectInitializer)
 {
+	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
 	MovComp = CreateDefaultSubobject<UHonkMovementComponent>(TEXT("MovementComp"));
 	WeaponComp = CreateDefaultSubobject<UHonkWeaponComponent>(TEXT("WeaponComp"));
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Car Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+    RootComp->SetupAttachment(RootComponent);
+	Mesh->SetupAttachment(RootComp);
 
     WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(FName("Weapon Mesh"));
-    WeaponMeshComp->SetupAttachment(Mesh, WeaponSocket);
+    WeaponMeshComp->SetupAttachment(RootComp);
 
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(FName("Collision Mesh"));
-	CollisionComponent->SetupAttachment(Mesh);
+	CollisionComponent->SetupAttachment(RootComp);
 }
 
 void AHonkPawn::BeginPlay()

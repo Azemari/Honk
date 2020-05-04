@@ -42,14 +42,13 @@ public:
     UPROPERTY(VisibleAnywhere)
 	class USkeletalMeshComponent* Mesh = nullptr;
 
-    UPROPERTY(Transient)
+    UPROPERTY(EditAnywhere)
 	class USkeletalMeshComponent* WeaponMeshComp = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Building)
     TSoftObjectPtr<class USkeletalMesh> WeaponMeshBase;
 
-
-	UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionComponent = nullptr;
 
     UPROPERTY(EditDefaultsOnly)
@@ -61,6 +60,10 @@ public:
 	class UHonkMovementComponent* GetMovComp() { return MovComp; }
 
 private:
+	UPROPERTY(VisibleAnywhere)
+    class USceneComponent* RootComp = nullptr;
+	UPROPERTY(VisibleAnywhere)
+    class USceneComponent* WeaponMountComp = nullptr;
 	UPROPERTY(VisibleAnywhere)
 	class UHonkMovementComponent* MovComp = nullptr;
 	UPROPERTY(VisibleAnywhere)
