@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{546BF9B7-42CC-AC67-6330-F985A61FD964}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Honk",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
