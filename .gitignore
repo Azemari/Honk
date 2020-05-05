@@ -9,5 +9,4 @@ build
 *.opensdf
 *.opendb
 *.sdf
-*.sln
 *.suo
