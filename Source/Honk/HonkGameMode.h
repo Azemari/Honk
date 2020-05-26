@@ -1,15 +1,22 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 #pragma once
-
-#include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "HonkGameMode.generated.h"
 
 UCLASS()
-class HONK_API AHonkGameMode : public AGameModeBase
+class AHonkGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-public:
-    AHonkGameMode();
+
+protected:
+	AHonkGameMode();
+
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, meta = (Min = 1, Max = 4))
+	int PlayerCount = 2;
+
 };
+
+
+
