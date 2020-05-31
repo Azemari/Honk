@@ -19,21 +19,34 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     void SetTriggerStatus(bool status);
+
+    void SetRPM(float newRPM);
+    void SetTrunRate(float newTurnRate);
+    void SetProjectileSpeed(float newProjectileSpeed);
+    void SetDamage(float newDamage);
+    void SetRange(float newRange);
+    void SetChargeSpeed(float newChargeSpeed);
+    void SetExplosionRange(float newExplosionRange);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-    UPROPERTY(EditAnywhere, Category = AllWeapons)
-    float rpm = 100;
-    UPROPERTY(EditAnywhere, Category = AllWeapons)
-    float damage = 10;
-    UPROPERTY(EditAnywhere, Category = AllWeapons)
-    float projectileSpeed = 10;
+    // Manage the fire rate
+    float FireRate;
+    float LastFired;
+    UPROPERTY()
+    bool  Firing;
 
+    // Weapon stats, set in the Weapons data asset
+	float RPM = 1;
+	float TurnRate;
+	float ProjectileSpeed;
+	float Damage;
+	float Range;
+	float ChargeSpeed;
+	float ExplosionRange;
 private:	
     void Fire(float dTime);
-
-    float fireRate;
-    float lastFired;
-    bool  firing = false;
+    int count = 0;
 };

@@ -8,37 +8,43 @@ UHonkWeaponComponent::UHonkWeaponComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-    fireRate = 1/(rpm/60);
-    lastFired = fireRate;
 }
-
 
 // Called when the game starts
 void UHonkWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();	
+
+    FireRate = 1/(RPM/60);
+    LastFired = 0.0f;
+    Firing = false;
 }
 
 // Called every frame
 void UHonkWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	Fire(DeltaTime);
+
+	if (Firing && LastFired <= 0.0f)
+    {
+        count += 1;
+        UE_LOG(LogTemp, Warning, TEXT("This function needs overriding %i"), count);
+        LastFired = FireRate;
+    }
+
+    if(LastFired > 0.0f)
+    {
+        LastFired -= DeltaTime;
+    }
 }
 
 void UHonkWeaponComponent::SetTriggerStatus(bool status)
 {
-    firing = status;
+    Firing = status;
 }
 
 void UHonkWeaponComponent::Fire(float dTime)
 {
-    if (firing && lastFired < 0)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("This function needs overriding"));
-        lastFired = fireRate;
-    }
-    lastFired -= dTime;
+    
 }
 

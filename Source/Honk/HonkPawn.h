@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "HonkCarAsset.h"
+#include "HonkWeaponAsset.h"
+#include "HonkWeaponComponent.h"
 #include "HonkPawn.generated.h"
 
 UCLASS()
@@ -36,14 +39,25 @@ public:
     void OnTriggerPressed();
     void OnTriggerReleased();
 
+	// Car data asset
+	UPROPERTY()
+	class UHonkCarAsset*	      CarAsset = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class USkeletalMeshComponent* CarMesh = nullptr;
+	UPROPERTY()
+	int32 CarTier = 0;
+
+	// Weapon data asset
+	UPROPERTY()
+	class UHonkWeaponAsset* 	WeaponAsset = nullptr;
     UPROPERTY(VisibleAnywhere)
-	class USkeletalMeshComponent* Mesh = nullptr;
-
-    UPROPERTY(EditAnywhere)
-	class USkeletalMeshComponent* WeaponMeshComp = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Building)
-    TSoftObjectPtr<class USkeletalMesh> WeaponMeshBase;
+	class UStaticMeshComponent* WeaponBodyMesh = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* WeaponBaseMesh = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* WeaponGunMesh = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* WeaponBarrelMesh = nullptr;
 
     UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionComponent = nullptr;
@@ -56,15 +70,29 @@ public:
 
 	class UHonkMovementComponent* GetMovComp() { return MovComp; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetWeapon(FName weapon, bool inConstructor = false);
+	UFUNCTION(BlueprintCallable)
+	void SetCar(FName car, int32 tier);
+
 private:
+	// Scene positional components
     UPROPERTY(VisibleAnywhere)
     class USceneComponent* RootComp = nullptr;
 	UPROPERTY(VisibleAnywhere)
-    class USceneComponent* WeaponMountComp = nullptr;
+    class USceneComponent* WeaponMount = nullptr;
+	UPROPERTY(VisibleAnywhere)
+    class USceneComponent* EndOfBarrel = nullptr;
+	// Pawn logic components
 	UPROPERTY(VisibleAnywhere)
 	class UHonkMovementComponent* MovComp = nullptr;
 	UPROPERTY(VisibleAnywhere)
-    class UHonkWeaponComponent* WeaponComp = nullptr;
+    TSubclassOf<UHonkWeaponComponent> WeaponComp = nullptr;
+
+	// Data assets
+    UPROPERTY()
+	UHonkWeaponComponent* WeaponInstance = nullptr;
+
 	/* Are we on a 'slippery' surface */
 	bool bIsLowFriction;
 };
