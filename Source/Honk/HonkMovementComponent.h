@@ -24,6 +24,7 @@ public:
 	void SetIsDrifting(bool bDrifting);
 	void CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult);
 	void CollideWithCar(class AHonkPawn* OtherActor, const FHitResult& SweepResult);
+	void RevertPosition();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "CarStats")
@@ -74,6 +75,9 @@ protected:
 	UPROPERTY(Transient)
 	FRotator PrevFrameRotation = FRotator::ZeroRotator;
 
+	UPROPERTY(Transient)
+	TArray<class UHonkMovementComponent*> ResolvedCollisions;
+
 private:
 
 	float Velocity = 0;
@@ -116,8 +120,9 @@ private:
 
 	UPROPERTY(Transient)
 	FVector CollisionVelocity = FVector::ZeroVector;
-	UPROPERTY(Transient)
-	FVector CollisionDeceleration = FVector(500, 500, 0);
+	UPROPERTY(EditAnywhere)
+	float CollisionDeceleration = 5.0f;
+	float CollisionDecelerationUU = 0.f;
 
 	FVector DriftDirection = FVector::ZeroVector;
 };

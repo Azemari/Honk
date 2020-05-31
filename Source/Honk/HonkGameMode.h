@@ -12,9 +12,7 @@ protected:
 	AHonkGameMode();
 
 	virtual void BeginPlay() override;
-public:
 	
-
 };
 
 
