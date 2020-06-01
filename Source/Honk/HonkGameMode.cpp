@@ -8,17 +8,11 @@
 
 AHonkGameMode::AHonkGameMode()
 {
+	
 	DefaultPawnClass = AHonkPawn::StaticClass();
 	HUDClass = AHonkHud::StaticClass();
 }
 
 void AHonkGameMode::BeginPlay()
-{
-	for (int i = 0; i < PlayerCount; i++)
-	{
-		if (UWorld* World = GetWorld())
-		{
-			APlayerController* PC = UGameplayStatics::CreatePlayer(World, i, true);
-		}
-	}
+{ 	
 }

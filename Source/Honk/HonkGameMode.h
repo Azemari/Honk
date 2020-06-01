@@ -12,10 +12,7 @@ protected:
 	AHonkGameMode();
 
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, meta = (Min = 1, Max = 4))
-	int PlayerCount = 2;
-
+	
 };
 
 

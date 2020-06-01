@@ -23,11 +23,14 @@ void UHonkMovementComponent::BeginPlay()
 	MinimumDriftStartVelocityUU = MinimumDriftStartVelocity * METRE_TO_UU;
 
 	VelocityForMaxDriftTurnRateUU = VelocityForMaxDriftTurnRate * METRE_TO_UU;
+
+	CollisionDecelerationUU = CollisionDeceleration * METRE_TO_UU;
 }
 
 void UHonkMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	ResolvedCollisions.Empty();
 	if (bIsDrifting)
 	{
 		HandleDrifting(DeltaTime);
@@ -73,7 +76,7 @@ void UHonkMovementComponent::HandleCollisionMovement(float DeltaTime)
 
 	if (CollisionVelocity.X < 0.0f)
 	{
-		CollisionVelocity.X += CollisionDeceleration.X;
+		CollisionVelocity.X += CollisionDecelerationUU * DeltaTime;
 		if (CollisionVelocity.X > 0.0f)
 		{
 			CollisionVelocity.X = 0.0f;
@@ -81,7 +84,7 @@ void UHonkMovementComponent::HandleCollisionMovement(float DeltaTime)
 	}
 	else if (CollisionVelocity.X > 0.0f)
 	{
-		CollisionVelocity.X -= CollisionDeceleration.X;
+		CollisionVelocity.X -= CollisionDecelerationUU * DeltaTime;
 		if (CollisionVelocity.X < 0.0f)
 		{
 			CollisionVelocity.X = 0.0f;
@@ -90,7 +93,7 @@ void UHonkMovementComponent::HandleCollisionMovement(float DeltaTime)
 
 	if (CollisionVelocity.Y < 0.0f)
 	{
-		CollisionVelocity.Y += CollisionDeceleration.Y;
+		CollisionVelocity.Y += CollisionDecelerationUU * DeltaTime;
 		if (CollisionVelocity.Y > 0.0f)
 		{
 			CollisionVelocity.Y = 0.0f;
@@ -98,7 +101,7 @@ void UHonkMovementComponent::HandleCollisionMovement(float DeltaTime)
 	}
 	else if (CollisionVelocity.Y > 0.0f)
 	{
-		CollisionVelocity.Y -= CollisionDeceleration.Y;
+		CollisionVelocity.Y -= CollisionDecelerationUU * DeltaTime;
 		if (CollisionVelocity.Y < 0.0f)
 		{
 			CollisionVelocity.Y = 0.0f;
@@ -302,30 +305,52 @@ void UHonkMovementComponent::SetIsDrifting(bool bDrifting)
 	}
 }
 
-void UHonkMovementComponent::CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult)
+void UHonkMovementComponent::RevertPosition()
 {
-	Velocity *= -CoefficientOfRestitution;
 	GetOwner()->SetActorLocation(PrevFrameLocation);
 	GetOwner()->SetActorRotation(PrevFrameRotation);
 }
 
+void UHonkMovementComponent::CollideWithWall(class AActor* OtherActor, const FHitResult& SweepResult)
+{
+	Velocity *= -CoefficientOfRestitution;
+	RevertPosition();
+}
+
 void UHonkMovementComponent::CollideWithCar(class AHonkPawn* OtherActor, const FHitResult& SweepResult)
 {
-	if (UHonkMovementComponent* OtherMovComp = OtherActor->GetMovComp())
+	UHonkMovementComponent* OtherMovComp = OtherActor->GetMovComp();
+	if (OtherMovComp && !ResolvedCollisions.Contains(OtherMovComp))
 	{
-		//figure out if the collision is head/butt on, or if one car has been T-Boned
-
 		FVector CollNormal = OtherActor->GetActorLocation() - GetOwner()->GetActorLocation();
 		CollNormal.Normalize();
 		
+		const float CollisionCor = (CoefficientOfRestitution + OtherMovComp->CoefficientOfRestitution) / 2;
 
-		//calc winner of collision based on momentum
+		//calculate velocity in the direction of the collision
+		const FVector VelocityVector = GetOwner()->GetActorForwardVector() * Velocity;
+		const float PreCollisionVelocity = FVector::DotProduct(VelocityVector, CollNormal);
 
-		float MassRatio = CarMass / OtherMovComp->CarMass;
-		OtherMovComp->CollisionVelocity = Velocity * CollNormal * 5 * MassRatio;
-		CollNormal *= -1.0f;
-		CollisionVelocity = (OtherMovComp->Velocity * CollNormal * 5) / MassRatio;
-		Velocity *= CoefficientOfRestitution;
-		OtherMovComp->Velocity *= OtherMovComp->CoefficientOfRestitution;
+		//Do the same for the other car, but reverse the direction
+		const FVector OtherVelocityVector = OtherActor->GetActorForwardVector() * OtherMovComp->Velocity;
+		const float OtherPreCollisionVelocity = FVector::DotProduct(OtherVelocityVector, -1.f * CollNormal);
+		
+		//using these velocities, and the masses of the cars, calculate the momentum of each car, and the expected final velocity
+		//m1u1 + m2u2 = m1v1 + m2v2
+		//calc velocity of other car post collision
+		const float OtherPostCollisionVelocity = ((2 * CarMass) / (CarMass + OtherMovComp->CarMass)) * PreCollisionVelocity;
+		OtherMovComp->CollisionVelocity = OtherPostCollisionVelocity * CollNormal * CollisionCor;
+
+		//calc velocity of this car post collision
+		const float PostCollisionVelocity = ((CarMass * PreCollisionVelocity) + (OtherMovComp->CarMass * OtherPreCollisionVelocity) - (OtherMovComp->CarMass * OtherPostCollisionVelocity)) / CarMass;
+		CollisionVelocity = PostCollisionVelocity * -1.f * CollNormal * CollisionCor;
+
+		Velocity = 0.f;
+		OtherMovComp->Velocity = 0.f;
+
+		OtherMovComp->ResolvedCollisions.Add(this);
+
+		RevertPosition();
+		OtherMovComp->RevertPosition();
 	}
 }
