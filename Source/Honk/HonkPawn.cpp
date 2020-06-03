@@ -7,8 +7,13 @@
 #include "Components/InputComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
+#include "UnrealMathUtility.h"
+#include "UnrealMathVectorConstants.h"
 
 #include "ConstructorHelpers.h"
+
+#define PI 3.1415926535 
+
 // Sets default values
 AHonkPawn::AHonkPawn()
 {
@@ -45,17 +50,8 @@ AHonkPawn::AHonkPawn()
 	WeaponAsset = WeaponData.Object;
 	UE_LOG(LogTemp, Display, TEXT("WeaponAsset compile-time load: %s"), ((WeaponAsset != nullptr) ? TEXT("SUCCEEDED") : TEXT("FAILED")));
 
-    WeaponBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBody"));
-    WeaponBodyMesh->SetupAttachment(WeaponMount);
-
-	WeaponBaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBase"));
-    WeaponBaseMesh->SetupAttachment(WeaponMount);
-
-	WeaponGunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponGun"));
-    WeaponGunMesh->SetupAttachment(WeaponMount);
-
-	WeaponBarrelMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBarrel"));
-    WeaponBarrelMesh->SetupAttachment(WeaponMount);
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+    WeaponMesh->SetupAttachment(WeaponMount);;
 
 	SetWeapon(TEXT("MachineGun"), true);
 }
@@ -92,8 +88,8 @@ void AHonkPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AHonkPawn::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AHonkPawn::MoveRight);
-	PlayerInputComponent->BindAxis("LookUp");
-	PlayerInputComponent->BindAxis("LookRight");
+    PlayerInputComponent->BindAxis("AimUp", this, &AHonkPawn::GetAimUp);
+    PlayerInputComponent->BindAxis("AimRight", this, &AHonkPawn::GetAimRight);
 
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed, this, &AHonkPawn::OnHandbrakePressed);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AHonkPawn::OnHandbrakeReleased);
@@ -132,10 +128,51 @@ void AHonkPawn::OnTriggerReleased()
     WeaponInstance->SetTriggerStatus(false);
 }
 
+
+
+void AHonkPawn::GetAimUp(float val)
+{
+    YAxis = val;
+}
+void AHonkPawn::GetAimRight(float val)
+{
+    XAxis = val;
+}
+
+void AHonkPawn::RotateWeapon()
+{
+    if ((YAxis != 0.0f) || (XAxis != 0.0f))
+    {
+        FRotator rotation;
+        if ((YAxis == 1 || YAxis == -1) && (XAxis == 1 || XAxis == -1))
+        {
+            float forward = ((YAxis >= 0.0f) ? 0.0f : 180.0f);
+            float right = (90.0f * XAxis) * ((YAxis >= 0.0f) ? 1.0f : -1.0f);
+
+            float angle = ((forward + right) - ((right > 0) ? 45:-45));
+
+            rotation = FRotator(0.0f, angle, 0.0f);
+            WeaponMount->SetWorldRotation(rotation);
+        }
+        else
+        {
+            float forward = ((YAxis >= 0.0f) ? 0.0f : 180.0f);
+            float right = (90.0f * XAxis) * ((YAxis >= 0.0f) ? 1.0f : -1.0f);
+            rotation = FRotator(0.0f, forward + right, 0.0f);
+            WeaponMount->SetWorldRotation(rotation);
+        }
+    }
+    else
+    {
+        WeaponMount->SetRelativeRotation(FRotator::ZeroRotator);
+    }
+}
+
 // Called every frame
 void AHonkPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    RotateWeapon();
 }
 
 void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
@@ -153,36 +190,12 @@ void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
 				WeaponInstance->RegisterComponent();
                 UE_LOG(LogTemp, Warning, TEXT("Weapon Instance: %s"), ((WeaponInstance != nullptr) ? TEXT("SUCCEEDED") : TEXT("FAILED")))
             }
-
-			if (UStaticMesh* mesh = WeaponAsset->Weapons[weapon].WeaponBody)  
+			if (USkeletalMesh* mesh = WeaponAsset->Weapons[weapon].WeaponMesh)  
 			{ 
-				WeaponBodyMesh->SetStaticMesh(mesh);
-				WeaponBodyMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);
-				WeaponBodyMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
+				WeaponMesh->SetSkeletalMesh(mesh);
+				WeaponMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);
+				WeaponMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
 			}
-			if (UStaticMesh* mesh = WeaponAsset->Weapons[weapon].WeaponBase)  
-			{
-				WeaponBaseMesh->SetStaticMesh(mesh);  
-				WeaponBaseMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);
-				WeaponBaseMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
-			}
-			if (UStaticMesh* mesh = WeaponAsset->Weapons[weapon].WeaponGun)   
-			{
-				WeaponGunMesh->SetStaticMesh(mesh);    
-				WeaponGunMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);   
-				WeaponGunMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
-			} 
-			if (UStaticMesh* mesh = WeaponAsset->Weapons[weapon].WeaponBarrel)
-			{
-                WeaponBarrelMesh->SetVisibility(true);
-				WeaponBarrelMesh->SetStaticMesh(mesh);
-				WeaponBarrelMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);
-				WeaponBarrelMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
-			}
-            else
-            {
-                WeaponBarrelMesh->SetVisibility(false);
-            }
 		}
 	}
 }
@@ -235,7 +248,6 @@ void AHonkPawn::SetCar(FName car, int32 tier)
 				}
 				break;
 			}
-			
 		}
 	}
 }

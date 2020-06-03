@@ -38,6 +38,9 @@ public:
     /** Trigger Functions */
     void OnTriggerPressed();
     void OnTriggerReleased();
+    void RotateWeapon();
+    void GetAimUp(float val);
+    void GetAimRight(float val);
 
 	// Car data asset
 	UPROPERTY()
@@ -51,13 +54,7 @@ public:
 	UPROPERTY()
 	class UHonkWeaponAsset* 	WeaponAsset = nullptr;
     UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* WeaponBodyMesh = nullptr;
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* WeaponBaseMesh = nullptr;
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* WeaponGunMesh = nullptr;
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* WeaponBarrelMesh = nullptr;
+	class USkeletalMeshComponent* WeaponMesh = nullptr;
 
     UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* CollisionComponent = nullptr;
@@ -95,4 +92,7 @@ private:
 
 	/* Are we on a 'slippery' surface */
 	bool bIsLowFriction;
+
+    float XAxis = 0;
+    float YAxis = 0;
 };

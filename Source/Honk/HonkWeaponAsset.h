@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include "HonkWeaponComponent.h"
 
@@ -40,13 +40,7 @@ struct FWeaponBlueprint
 
 	// Weaopn mesh data
     UPROPERTY(EditAnywhere, Category=WeaponMeshes)
-	UStaticMesh* WeaponBody = nullptr;
-	UPROPERTY(EditAnywhere, Category=WeaponMeshes)
-	UStaticMesh* WeaponBase = nullptr;
-	UPROPERTY(EditAnywhere, Category=WeaponMeshes)
-	UStaticMesh* WeaponGun = nullptr;
-	UPROPERTY(EditAnywhere, Category=WeaponMeshes)
-	UStaticMesh* WeaponBarrel = nullptr;
+	USkeletalMesh* WeaponMesh = nullptr;
 
 	// Weapon transform data
 	UPROPERTY(EditAnywhere, Category=WeaponData)
