@@ -18,6 +18,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
+	USceneComponent* RootComp = nullptr;
+	UPROPERTY(EditAnywhere)
 	UBoxComponent* ArenaCollider1 = nullptr;
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* ArenaCollider2 = nullptr;

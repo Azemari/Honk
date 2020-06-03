@@ -10,7 +10,13 @@ AHonkArmourDrop::AHonkArmourDrop()
 	PrimaryActorTick.bCanEverTick = true;
 	DropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DropMesh"));
 	LightComponent = CreateDefaultSubobject<USpotLightComponent>(TEXT("LightComp"));
-	LightComponent->SetupAttachment(DropMesh);
+	Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	Collider->SetCollisionProfileName("Trigger");
+
+	RootComponent = DropMesh;
+	LightComponent->SetupAttachment(RootComponent);
+	Collider->SetupAttachment(RootComponent);
+	Collider->OnComponentBeginOverlap.AddDynamic(this, &AHonkArmourDrop::OnOverlapBegin);
 }
 
 // Called when the game starts or when spawned
@@ -28,3 +34,14 @@ void AHonkArmourDrop::Tick(float DeltaTime)
 	DropMesh->AddWorldRotation(Rotator * speed * DeltaTime);
 }
 
+void AHonkArmourDrop::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
+{
+	if((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		if (AHonkPawn* other = Cast<AHonkPawn>(OtherActor))
+		{
+			other->UpgradeCar();
+		}
+		Destroy();
+	}
+};

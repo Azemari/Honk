@@ -17,6 +17,9 @@
 // Sets default values
 AHonkPawn::AHonkPawn()
 {
+
+	health = MaxHealthTier1;
+
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// Positional components
@@ -43,7 +46,8 @@ AHonkPawn::AHonkPawn()
 	CarMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Car Mesh"));
 	CarMesh->SetupAttachment(RootComp);
 
-	SetCar(TEXT("Camero"), 0);
+	CarName = TEXT("Camero");
+	SetCar(CarName, 0);
 
 	// Loading initial weapon asset and meshes (Machine gun)
 	static ConstructorHelpers::FObjectFinder<UHonkWeaponAsset> WeaponData(TEXT("/Game/DataAssets/Weapons"));
@@ -249,5 +253,52 @@ void AHonkPawn::SetCar(FName car, int32 tier)
 				break;
 			}
 		}
+	}
+}
+
+void AHonkPawn::UpgradeCar() 
+{
+	if (CarAsset != nullptr)
+	{
+		if (CurrentTier < 2)
+		{
+			++CurrentTier;
+			switch (CurrentTier)
+			{
+			case 1:
+				if (USkeletalMesh* mesh = CarAsset->Cars[CarName].Tier2Mesh)  
+				{ 
+					CarMesh->SetSkeletalMesh(mesh); 
+					CarMesh->SetRelativeLocation(CarAsset->Cars[CarName].Tier2.MeshPos);
+					CarMesh->SetRelativeRotation(CarAsset->Cars[CarName].Tier2.MeshRot.Rotation().Quaternion());
+
+					CollisionComponent->SetRelativeLocation(CarAsset->Cars[CarName].Tier2.CollisionPos);
+					CollisionComponent->SetRelativeScale3D(CarAsset->Cars[CarName].Tier2.CollisionScale);
+
+					WeaponMount->SetRelativeLocation(CarAsset->Cars[CarName].Tier2.WeaponMountPos);
+					health = MaxHealthTier2;
+				}
+				break;
+			case 2:
+				if (USkeletalMesh* mesh = CarAsset->Cars[CarName].Tier3Mesh)  
+				{ 
+					CarMesh->SetSkeletalMesh(mesh); 
+					CarMesh->SetRelativeLocation(CarAsset->Cars[CarName].Tier3.MeshPos);
+					CarMesh->SetRelativeRotation(CarAsset->Cars[CarName].Tier3.MeshRot.Rotation().Quaternion());
+
+					CollisionComponent->SetRelativeLocation(CarAsset->Cars[CarName].Tier3.CollisionPos);
+					CollisionComponent->SetRelativeScale3D(CarAsset->Cars[CarName].Tier3.CollisionScale);
+
+					WeaponMount->SetRelativeLocation(CarAsset->Cars[CarName].Tier3.WeaponMountPos);
+					health = MaxHealthTier3;
+				}
+				break;
+			}
+		}
+		else
+		{
+			health = MaxHealthTier3;
+		}
+		
 	}
 }

@@ -71,6 +71,17 @@ public:
 	void SetWeapon(FName weapon, bool inConstructor = false);
 	UFUNCTION(BlueprintCallable)
 	void SetCar(FName car, int32 tier);
+    UFUNCTION()
+    void UpgradeCar();
+
+	int health;
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHealthTier1 = 100;
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHealthTier2 = 133;
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHealthTier3 = 200;
+
 
 private:
 	// Scene positional components
@@ -89,6 +100,9 @@ private:
 	// Data assets
     UPROPERTY()
 	UHonkWeaponComponent* WeaponInstance = nullptr;
+
+	FName CarName;
+	int   CurrentTier;
 
 	/* Are we on a 'slippery' surface */
 	bool bIsLowFriction;
