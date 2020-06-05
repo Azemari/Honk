@@ -28,11 +28,29 @@ void AHonkSpawner::Tick(float DeltaTime)
 
 void AHonkSpawner::SpawnArmour() 
 {
+    if (ArmourSpawns.Num() > 0)
+    {
+        FActorSpawnParameters spawnParams;
+        int32 index = FMath::RandRange(0, ArmourSpawns.Num()-1);
+	    GetWorld()->SpawnActor<AHonkArmourDrop>(ArmourDrop,
+	    				 ArmourSpawns[index]->GetPosition(),
+	    				 ArmourSpawns[index]->GetRotation(),
+                         spawnParams);
+    }
 	UE_LOG(LogTemp, Display, TEXT("Armour Spawned!"));
 }
 
 void AHonkSpawner::SpawnWeapon() 
 {
+    if (WeaponSpawns.Num() > 0)
+    {
+        FActorSpawnParameters spawnParams;
+        int32 index = FMath::RandRange(0, WeaponSpawns.Num()-1);
+	    GetWorld()->SpawnActor<AHonkWeaponDrop>(WeaponDrop,
+	    				 WeaponSpawns[index]->GetPosition(),
+	    				 WeaponSpawns[index]->GetRotation(),
+                         spawnParams);
+    }
 	UE_LOG(LogTemp, Display, TEXT("Weapon Spawned!"));
 }
 

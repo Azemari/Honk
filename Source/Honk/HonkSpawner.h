@@ -6,7 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "HonkArmourDrop.h"
 #include "HonkWeaponDrop.h"
+#include "WorldPosition.h"
 #include "TimerManager.h"
+#include "Engine/World.h"
 
 
 #include "HonkSpawner.generated.h"
@@ -25,21 +27,24 @@ public:
 	void SpawnWeapon();
 
 	UPROPERTY(EditAnywhere, Category=ArmourData)
-	TArray<FVector> ArmourSpawns;
-	UPROPERTY(EditAnywhere, Category=WeaponData)
-	TArray<FVector> HealthSpawns;
-
-	FTimerHandle ArmourTimer;
+	TSubclassOf<AHonkArmourDrop> ArmourDrop = nullptr;
+	UPROPERTY(EditAnywhere, Category=ArmourData)
+	TArray<AWorldPosition*> ArmourSpawns;
 	UPROPERTY(EditAnywhere, Category=ArmourData)
 	float ArmourSpawnInterval = 15;
 	UPROPERTY(EditAnywhere, Category=ArmourData)
 	int ArmourInitialSpawnDelay = 15;
+	FTimerHandle ArmourTimer;
 
-	FTimerHandle WeaponTimer;
+	UPROPERTY(EditAnywhere, Category=WeaponData)
+	TSubclassOf<AHonkWeaponDrop> WeaponDrop = nullptr;
+	UPROPERTY(EditAnywhere, Category=WeaponData)
+	TArray<AWorldPosition*> WeaponSpawns;
 	UPROPERTY(EditAnywhere, Category=WeaponData)
 	float WeaponSpawnInterval = 15;
 	UPROPERTY(EditAnywhere, Category=WeaponData)
 	int WeaponInitialSpawnDelay = 15;
+	FTimerHandle WeaponTimer;
 
 protected:
 	// Called when the game starts or when spawned

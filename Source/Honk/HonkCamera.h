@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Camera/CameraComponent.h" 
+#include "Camera/CameraComponent.h"
+#include "HonkPawn.h"
+#include "EngineUtils.h"
 
 #include "HonkCamera.generated.h"
 
@@ -21,6 +23,10 @@ class HONK_API AHonkCamera : public AActor
     UPROPERTY(VisibleAnywhere)
     int cameraMoveSpeed = 10;
 	
+    UPROPERTY()
+    TArray<AHonkPawn*> Players;
+
+
 public:	
 	// Sets default values for this actor's properties
 	AHonkCamera();
