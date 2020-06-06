@@ -78,6 +78,7 @@ public:
 
 	void DestroyAndRespawnPawn(float DeltaTime);
 	void StartRespawn();
+	bool RespawnStatus() { return Respawn; }
 	bool Respawn = false;
 	UPROPERTY(EditAnywhere)
 	float RespawnDelay = 5;
