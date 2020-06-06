@@ -22,16 +22,20 @@ class HONK_API AHonkCamera : public AActor
     
     UPROPERTY(VisibleAnywhere)
     int cameraMoveSpeed = 10;
-	
-    UPROPERTY()
-    TArray<AHonkPawn*> Players;
 
-
+    UPROPERTY(EditAnywhere)
+    FVector CentroidOffset;
+    UPROPERTY(EditAnywhere)
+    float TargetSeparationThreshold;
+    UPROPERTY(EditAnywhere)
+    float MaxCameraZoom;
 public:	
 	// Sets default values for this actor's properties
 	AHonkCamera();
     // Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    float FindLargestDistance(TArray<AActor*> AllPlayers);
 
 protected:
 	// Called when the game starts or when spawned
