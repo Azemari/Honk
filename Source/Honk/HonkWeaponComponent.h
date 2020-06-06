@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "HonkWeaponComponent.generated.h"
+#include "HonkProjectile.h"
+#include "ProjectileAsset.h"
 
+#include "HonkWeaponComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HONK_API UHonkWeaponComponent : public UActorComponent
@@ -15,6 +17,7 @@ class HONK_API UHonkWeaponComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UHonkWeaponComponent();
+    void Initialise(USceneComponent* EndOfBarrel, FName projectileName);
     // Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -22,15 +25,14 @@ public:
 
     void SetRPM(float newRPM);
     void SetTrunRate(float newTurnRate);
-    void SetProjectileSpeed(float newProjectileSpeed);
-    void SetDamage(float newDamage);
-    void SetRange(float newRange);
     void SetChargeSpeed(float newChargeSpeed);
-    void SetExplosionRange(float newExplosionRange);
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+    UPROPERTY()
+    class UProjectileAsset* ProjectileAsset = nullptr;
 
     // Manage the fire rate
     float FireRate;
@@ -39,14 +41,15 @@ protected:
     bool  Firing;
 
     // Weapon stats, set in the Weapons data asset
-	float RPM = 1;
+	float RPM = 900;
 	float TurnRate;
-	float ProjectileSpeed;
-	float Damage;
-	float Range;
 	float ChargeSpeed;
-	float ExplosionRange;
+
+    UPROPERTY()
+    USceneComponent* Barrel = nullptr;
+    UPROPERTY()
+    FProjectileBlueprint ProjectileBP;
+
 private:	
-    void Fire(float dTime);
-    int count = 0;
+    virtual void Fire(float dTime);
 };

@@ -6,7 +6,6 @@
 #include "GameFramework/Pawn.h"
 #include "HonkCarAsset.h"
 #include "HonkWeaponAsset.h"
-#include "HonkWeaponComponent.h"
 #include "WorldPosition.h"
 
 
@@ -109,12 +108,10 @@ private:
 	// Pawn logic components
 	UPROPERTY(VisibleAnywhere)
 	class UHonkMovementComponent* MovComp = nullptr;
-	UPROPERTY(VisibleAnywhere)
-    TSubclassOf<UHonkWeaponComponent> WeaponComp = nullptr;
 
 	// Data assets
     UPROPERTY()
-	UHonkWeaponComponent* WeaponInstance = nullptr;
+	class UHonkWeaponComponent* WeaponInstance = nullptr;
 
 	FName CarName;
 	int   CurrentTier;

@@ -2,6 +2,7 @@
 
 #include "HonkPawn.h"
 #include "HonkMovementComponent.h"
+#include "HonkWeaponComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
@@ -11,8 +12,6 @@
 #include "UnrealMathVectorConstants.h"
 
 #include "ConstructorHelpers.h"
-
-#define PI 3.1415926535 
 
 // Sets default values
 AHonkPawn::AHonkPawn()
@@ -188,13 +187,15 @@ void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
 	{
 		if (WeaponAsset->Weapons.Contains(weapon))
 		{
+			//EndOfBarrel->SetRelativeLocation(FVector(0,0,0));
 			EndOfBarrel->SetRelativeLocation(WeaponAsset->Weapons[weapon].EndOfBarrel);
 
             if (!inConstructor)
             {
-			    WeaponComp = WeaponAsset->Weapons[weapon].WeaponStats.FiringMechanism;
-			    WeaponInstance = NewObject<UHonkWeaponComponent>(this, WeaponComp, WeaponComp->GetFName());
+			    TSubclassOf<UHonkWeaponComponent> weaponComp = WeaponAsset->Weapons[weapon].WeaponStats.FiringMechanism;
+			    WeaponInstance = NewObject<UHonkWeaponComponent>(this, weaponComp, weaponComp->GetFName());
 				WeaponInstance->RegisterComponent();
+				WeaponInstance->Initialise(EndOfBarrel, WeaponAsset->Weapons[weapon].ProjectileName);
                 UE_LOG(LogTemp, Warning, TEXT("Weapon Instance: %s"), ((WeaponInstance != nullptr) ? TEXT("SUCCEEDED") : TEXT("FAILED")))
             }
 			if (USkeletalMesh* mesh = WeaponAsset->Weapons[weapon].WeaponMesh)  
@@ -312,6 +313,7 @@ void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime)
 	//this->SetActorLocation(OffscreenPosition->GetPosition());
 
 	SetCar(CarName, 0);
+	SetWeapon(TEXT("MachineGun"));
 	CurrentTier = 0;
 	health = MaxHealthTier1;
 

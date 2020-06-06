@@ -14,6 +14,7 @@ USTRUCT(BlueprintType)
 struct FWeaponData
 {
     GENERATED_BODY()
+	
 	// Weapon Mechanical data
 	UPROPERTY(EditAnywhere, Category=WeaponData)
 	TSubclassOf<UHonkWeaponComponent> FiringMechanism;
@@ -22,15 +23,8 @@ struct FWeaponData
 	UPROPERTY(EditAnywhere, Category=WeaponStats)
 	float TurnRate;
 	UPROPERTY(EditAnywhere, Category=WeaponStats)
-	float ProjectileSpeed;
-	UPROPERTY(EditAnywhere, Category=WeaponStats)
-	float Damage;
-	UPROPERTY(EditAnywhere, Category=WeaponStats)
-	float Range;
-	UPROPERTY(EditAnywhere, Category=WeaponStats)
 	float ChargeSpeed;
-	UPROPERTY(EditAnywhere, Category=WeaponStats)
-	float ExplosionRange;
+	
 };
 
 USTRUCT(BlueprintType)
@@ -49,8 +43,10 @@ struct FWeaponBlueprint
 	FVector MeshRot;
 	UPROPERTY(EditAnywhere, Category=WeaponData)
 	FVector MeshScale;
-
+	
 	// Weapon Mechanical data
+	UPROPERTY(EditAnywhere)
+	FName ProjectileName;
 	UPROPERTY(EditAnywhere, Category=WeaponStats)
 	FWeaponData WeaponStats;
 };
