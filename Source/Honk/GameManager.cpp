@@ -19,7 +19,7 @@ void AGameManager::BeginPlay()
 	{
 		if (UWorld* World = GetWorld())
 		{
-			APlayerController* PC = UGameplayStatics::CreatePlayer(World, i, true);
+			APlayerController* PC = UGameplayStatics::CreatePlayer((UObject*)World, i, true);
 		}
 	}
 }

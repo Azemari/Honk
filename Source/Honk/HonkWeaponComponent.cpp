@@ -24,18 +24,7 @@ void UHonkWeaponComponent::BeginPlay()
 void UHonkWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (Firing && LastFired <= 0.0f)
-    {
-        count += 1;
-        UE_LOG(LogTemp, Warning, TEXT("This function needs overriding %i"), count);
-        LastFired = FireRate;
-    }
-
-    if(LastFired > 0.0f)
-    {
-        LastFired -= DeltaTime;
-    }
+    Fire(DeltaTime);
 }
 
 void UHonkWeaponComponent::SetTriggerStatus(bool status)
@@ -45,6 +34,16 @@ void UHonkWeaponComponent::SetTriggerStatus(bool status)
 
 void UHonkWeaponComponent::Fire(float dTime)
 {
-    
+    if (Firing && LastFired <= 0.0f)
+    {
+        count += 1;
+        UE_LOG(LogTemp, Warning, TEXT("This function needs overriding %i"), count);
+        LastFired = FireRate;
+    }
+
+    if(LastFired > 0.0f)
+    {
+        LastFired -= dTime;
+    }
 }
 

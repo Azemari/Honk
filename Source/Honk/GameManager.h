@@ -24,4 +24,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = 1, ClampMax = 4))
 	int PlayerCount = 2;
 
+	
+
 };

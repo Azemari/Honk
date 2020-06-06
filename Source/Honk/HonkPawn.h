@@ -7,6 +7,9 @@
 #include "HonkCarAsset.h"
 #include "HonkWeaponAsset.h"
 #include "HonkWeaponComponent.h"
+#include "WorldPosition.h"
+
+
 #include "HonkPawn.generated.h"
 
 UCLASS()
@@ -74,6 +77,18 @@ public:
     UFUNCTION()
     void UpgradeCar();
 
+	void DestroyAndRespawnPawn(float DeltaTime);
+	void StartRespawn();
+	bool Respawn = false;
+	UPROPERTY(EditAnywhere)
+	float RespawnDelay = 5;
+	float CurrentDelay = 5;
+
+	UPROPERTY(EditAnywhere)
+	AWorldPosition* OffscreenPosition = nullptr;
+	UPROPERTY(EditAnywhere)
+	TArray<AWorldPosition*> SpawnPoints;
+
 	int health;
 	UPROPERTY(EditDefaultsOnly)
 	int MaxHealthTier1 = 100;
@@ -110,3 +125,5 @@ private:
     float XAxis = 0;
     float YAxis = 0;
 };
+
+

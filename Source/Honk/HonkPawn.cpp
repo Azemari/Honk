@@ -99,7 +99,7 @@ void AHonkPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AHonkPawn::OnHandbrakeReleased);
     PlayerInputComponent->BindAction("Trigger", IE_Pressed, this, &AHonkPawn::OnTriggerPressed);
     PlayerInputComponent->BindAction("Trigger", IE_Released, this, &AHonkPawn::OnTriggerReleased);
-
+	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &AHonkPawn::StartRespawn);
 }
 
 void AHonkPawn::MoveForward(float Val)
@@ -177,6 +177,9 @@ void AHonkPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     RotateWeapon();
+
+	if (health < 0){ StartRespawn(); }
+	if (Respawn){ DestroyAndRespawnPawn(DeltaTime); }
 }
 
 void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
@@ -301,4 +304,34 @@ void AHonkPawn::UpgradeCar()
 		}
 		
 	}
+}
+
+void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime) 
+{
+	this->SetActorLocation(FVector(5000,5000,5000));
+	//this->SetActorLocation(OffscreenPosition->GetPosition());
+
+	SetCar(CarName, 0);
+	CurrentTier = 0;
+	health = MaxHealthTier1;
+
+	if (CurrentDelay < 0)
+	{
+		int32 index = FMath::RandRange(0, SpawnPoints.Num()-1);
+		this->SetActorLocation(FVector(700,-1400,-4));
+		//this->SetActorLocation(SpawnPoints[index]->GetPosition());
+		//this->SetActorRotation(SpawnPoints[index]->GetRotation());
+
+		CurrentDelay = RespawnDelay;
+		Respawn = false;
+	}
+	else
+	{
+		CurrentDelay -= DeltaTime;
+	}
+}
+
+void AHonkPawn::StartRespawn() 
+{
+	Respawn = true;
 }
