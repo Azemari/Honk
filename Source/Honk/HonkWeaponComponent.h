@@ -23,9 +23,9 @@ public:
 
     void SetTriggerStatus(bool status);
 
-    void SetRPM(float newRPM);
-    void SetTrunRate(float newTurnRate);
-    void SetChargeSpeed(float newChargeSpeed);
+    void SetRPM(float newRPM) { RPM = newRPM; FireRate = 1/(RPM/60);}
+    void SetTurnRate(float newTurnRate) { TurnRate = newTurnRate;}
+    void SetChargeSpeed(float newChargeSpeed){ ChargeSpeed = newChargeSpeed;}
 
 protected:
 	// Called when the game starts
@@ -41,7 +41,7 @@ protected:
     bool  Firing;
 
     // Weapon stats, set in the Weapons data asset
-	float RPM = 900;
+	float RPM;
 	float TurnRate;
 	float ChargeSpeed;
 
