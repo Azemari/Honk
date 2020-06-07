@@ -10,6 +10,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "HonkGameInstance.h"
+#include "HonkGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealMathUtility.h"
 #include "UnrealMathVectorConstants.h"
@@ -319,10 +320,20 @@ void AHonkPawn::UpgradeCar()
 	}
 }
 
+void AHonkPawn::NotifyGameInstanceOfDeath()
+{
+	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
+	{
+		GI->AddLosingPlayer(UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController())));
+	}
+}
+
 void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime) 
 {
 	this->SetActorLocation(FVector(5000,5000,5000));
 	//this->SetActorLocation(OffscreenPosition->GetPosition());
+
+	
 
 	SetCar(CarName, 0);
 	SetWeapon(TEXT("MachineGun"));
@@ -331,13 +342,28 @@ void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime)
 
 	if (CurrentDelay < 0)
 	{
-		int32 index = FMath::RandRange(0, SpawnPoints.Num()-1);
-		this->SetActorLocation(FVector(700,-1400,-4));
-		//this->SetActorLocation(SpawnPoints[index]->GetPosition());
-		//this->SetActorRotation(SpawnPoints[index]->GetRotation());
+		NumLives--;
+		if (NumLives <= 0)
+		{
+			Respawn = false;
+			NotifyGameInstanceOfDeath();
+			if (AHonkGameMode* GM = Cast<AHonkGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+			{
+				GM->PlayerRemovedFromGame(this);
+			}
+			Destroy();
+		}
+		else
+		{
+			int32 index = FMath::RandRange(0, SpawnPoints.Num()-1);
+			this->SetActorLocation(FVector(700,-1400,-4));
+			//this->SetActorLocation(SpawnPoints[index]->GetPosition());
+			//this->SetActorRotation(SpawnPoints[index]->GetRotation());
 
-		CurrentDelay = RespawnDelay;
-		Respawn = false;
+			CurrentDelay = RespawnDelay;
+			Respawn = false;
+		}
+
 	}
 	else
 	{

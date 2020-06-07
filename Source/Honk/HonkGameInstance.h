@@ -28,7 +28,15 @@ public:
 	UFUNCTION()
 	FString GetPlayerCar(int PlayerNum);
 
+	UFUNCTION()
+	void AddLosingPlayer(int LosingPlayerNum) { LoserOrder.Add(LosingPlayerNum); }
+	UFUNCTION()
+	void ClearLosingPlayers() { LoserOrder.Empty(); }
+	UFUNCTION()
+	TArray<int> GetLosingPlayers() { return LoserOrder; }
+
 private:
 	int PlayerCount = 2;
 	TArray<FString> PlayerCars;
+	TArray<int> LoserOrder;
 };

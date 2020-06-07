@@ -30,14 +30,39 @@ AActor* AHonkGameMode::ChoosePlayerStart_Implementation(AController* Player)
 			if (*StartIt)
 			{
 				EmergencyBackup = *StartIt;
-				if (StartIt->PlayerNum == PlayersSpawned)
+				if (StartIt->PlayerNum == LivePlayers)
 				{
-					PlayersSpawned++;
+					LivePlayers++;
 					return *StartIt;
 				}
 			}
 		}
 	}
-	PlayersSpawned++;
+	LivePlayers++;
 	return EmergencyBackup;
+}
+
+void AHonkGameMode::PlayerRemovedFromGame(AHonkPawn* DeadPawn)
+{
+	LivePlayers--;
+	if (LivePlayers <= 1)
+	{
+		for (TActorIterator<AHonkPawn> PawnIt(GetWorld()); PawnIt; ++PawnIt)
+		{
+			if (*PawnIt && *PawnIt != DeadPawn)
+			{
+				PawnIt->NotifyGameInstanceOfDeath();
+			}
+		}
+
+		for (TActorIterator<APlayerController> ContIt(GetWorld()); ContIt; ++ContIt)
+		{
+			if (*ContIt && UGameplayStatics::GetPlayerControllerID(*ContIt) != 0)
+			{
+				UGameplayStatics::RemovePlayer(*ContIt, false);
+			}
+		}
+
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("FinishPodium"));
+	}
 }

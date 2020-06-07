@@ -76,6 +76,7 @@ public:
     UFUNCTION()
     void UpgradeCar();
 
+	void NotifyGameInstanceOfDeath();
 	void DestroyAndRespawnPawn(float DeltaTime);
 	void StartRespawn();
 	bool RespawnStatus() { return Respawn; }
@@ -83,6 +84,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float RespawnDelay = 5;
 	float CurrentDelay = 5;
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumLives = 3;
 
 	UPROPERTY(EditAnywhere)
 	AWorldPosition* OffscreenPosition = nullptr;

@@ -46,6 +46,8 @@ void AHonkMenuHUD::ShowMainMenu() const
 
 void AHonkMenuHUD::HideUI() const
 {
-	MenuWidget->SetVisibility(ESlateVisibility::Hidden);
-	OptionsWidget->SetVisibility(ESlateVisibility::Hidden);
+	MenuWidget->RemoveFromViewport();
+	OptionsWidget->RemoveFromViewport();
+	MenuWidget->RemoveFromParent();
+	OptionsWidget->RemoveFromParent();
 }

@@ -8,6 +8,10 @@ class AHonkGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+
+	void PlayerRemovedFromGame(class AHonkPawn* DeadPawn);
+
 protected:
 	AHonkGameMode();
 
@@ -15,7 +19,7 @@ protected:
 	
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-	int PlayersSpawned = 0;
+	int LivePlayers = 0;
 
 };
 

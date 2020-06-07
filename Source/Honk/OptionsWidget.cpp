@@ -12,14 +12,15 @@ void UOptionsWidget::NativeConstruct()
 	{
 		if (GI->GetNumPlayers() > 0 && GI->GetNumPlayers() < 5)
 		{
-			PlayerCount->SetSelectedIndex(GI->GetNumPlayers() - 1);
+			PlayerCount->SetSelectedIndex(GI->GetNumPlayers() - 2);
 		}
 		else
 		{
-			PlayerCount->SetSelectedIndex(1);
+			PlayerCount->SetSelectedIndex(0);
 			GI->SetNumPlayers(2);
 		}
 	}
+	DisplayAppropriateCarSelectors(PlayerCount->GetSelectedIndex() + 2);
 
 	PlayerOneCar->SetSelectedIndex(0);
 	PlayerTwoCar->SetSelectedIndex(0);
@@ -42,24 +43,19 @@ void UOptionsWidget::OnPlayerCountUpdated(FString SelectedItem, ESelectInfo::Typ
 {
 	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
 	{
-		GI->SetNumPlayers(PlayerCount->GetSelectedIndex() + 1);
-		DisplayAppropriateCarSelectors(PlayerCount->GetSelectedIndex() + 1);
+		GI->SetNumPlayers(PlayerCount->GetSelectedIndex() + 2);
+		DisplayAppropriateCarSelectors(PlayerCount->GetSelectedIndex() + 2);
 	}
 }
 
 void UOptionsWidget::DisplayAppropriateCarSelectors(int Players)
 {
-	//there must be at least one player
+	//there must be at least two players
 	PlayerOneCar->SetVisibility(ESlateVisibility::Visible);
+	PlayerTwoCar->SetVisibility(ESlateVisibility::Visible);
 
-	PlayerTwoCar->SetVisibility(ESlateVisibility::Hidden);
 	PlayerThreeCar->SetVisibility(ESlateVisibility::Hidden);
 	PlayerFourCar->SetVisibility(ESlateVisibility::Hidden);
-
-	if (Players > 1)
-	{
-		PlayerTwoCar->SetVisibility(ESlateVisibility::Visible);
-	}
 
 	if (Players > 2)
 	{
