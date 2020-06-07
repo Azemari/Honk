@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.24",
+	"EngineAssociation": "{546BF9B7-42CC-AC67-6330-F985A61FD964}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"PhysXVehicles",
-				"UMG"
+				"UMG",
+				"UMGEditor"
 			]
 		}
 	],

@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "HonkGameInstance.h"
+#include "HonkPawn.h"
 #include "HonkMenuHUD.h"
 
 // Sets default values
@@ -14,11 +15,41 @@ AGameManager::AGameManager()
 
 }
 
+void AGameManager::Tick(float DeltaTime) 
+{
+	TArray<AActor*> actors; 
+	UGameplayStatics::GetAllActorsOfClass(this, AHonkPawn::StaticClass(), actors);
+	for (int i = 0; i < actors.Num(); ++i)
+	{
+		if (AHonkPawn* cast = Cast<AHonkPawn>(actors[i]))
+		{
+			HUDWidget->UpdatePlayer(cast->NumLives, cast->health, cast->WeaponName, i);
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void AGameManager::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnPlayers();
+	if (HUD != nullptr)
+	{
+		HUDWidget = CreateWidget<UGameHudWidget>(UGameplayStatics::GetPlayerController(this, 0), HUD);
+		if (HUDWidget != nullptr)
+		{	
+			TArray<AActor*> actors; 
+			UGameplayStatics::GetAllActorsOfClass(this, AHonkPawn::StaticClass(), actors);
+			for (int i = 0; i < actors.Num(); ++i)
+			{
+				if (AHonkPawn* cast = Cast<AHonkPawn>(actors[i]))
+				{
+					HUDWidget->AddPlayer(cast->NumLives, cast->health, cast->WeaponName, i);
+				}
+			}
+			HUDWidget->AddToViewport();
+		}
+	}
 }
 
 void AGameManager::SpawnPlayers() const
@@ -33,5 +64,6 @@ void AGameManager::SpawnPlayers() const
 			}
 		}
 	}
+
 }
 

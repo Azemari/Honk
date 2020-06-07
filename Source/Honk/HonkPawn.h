@@ -105,7 +105,8 @@ public:
 	UFUNCTION()
 	void TakeDamage(float value){ health -= value; }
 
-
+	UPROPERTY()
+	FName WeaponName = TEXT("MachineGun");
 private:
 	// Scene positional components
     UPROPERTY(VisibleAnywhere)

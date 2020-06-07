@@ -201,7 +201,15 @@ void AHonkPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
     RotateWeapon();
 
-	if (health < 0){ StartRespawn(); }
+	if (health < 0)
+	{ 
+		NumLives--;
+		SetCar(CarName, 0);
+		SetWeapon(TEXT("MachineGun"));
+		CurrentTier = 0;
+		health = MaxHealthTier1;
+		StartRespawn(); 
+	}
 	if (Respawn){ DestroyAndRespawnPawn(DeltaTime); }
 }
 
@@ -237,6 +245,7 @@ void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
 				WeaponMesh->SetRelativeScale3D(WeaponAsset->Weapons[weapon].MeshScale);
 				WeaponMesh->SetRelativeRotation(WeaponAsset->Weapons[weapon].MeshRot.Rotation().Quaternion());
 			}
+			WeaponName = weapon;
 		}
 	}
 }
@@ -353,16 +362,9 @@ void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime)
 	this->SetActorLocation(FVector(5000,5000,5000));
 	//this->SetActorLocation(OffscreenPosition->GetPosition());
 
-	
-
-	SetCar(CarName, 0);
-	SetWeapon(TEXT("MachineGun"));
-	CurrentTier = 0;
-	health = MaxHealthTier1;
-
 	if (CurrentDelay < 0)
 	{
-		NumLives--;
+		
 		if (NumLives <= 0)
 		{
 			Respawn = false;
