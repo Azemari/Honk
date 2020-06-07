@@ -21,10 +21,10 @@ void UOptionsWidget::NativeConstruct()
 		}
 	}
 
-	PlayerOneCar->SetSelectedIndex(4);
-	PlayerTwoCar->SetSelectedIndex(4);
-	PlayerThreeCar->SetSelectedIndex(4);
-	PlayerFourCar->SetSelectedIndex(4);
+	PlayerOneCar->SetSelectedIndex(0);
+	PlayerTwoCar->SetSelectedIndex(0);
+	PlayerThreeCar->SetSelectedIndex(0);
+	PlayerFourCar->SetSelectedIndex(0);
 
 	FScriptDelegate PlayerCountDelegate;
 	PlayerCountDelegate.BindUFunction(this, FName("OnPlayerCountUpdated"));
