@@ -19,6 +19,8 @@ struct FWeaponData
 	UPROPERTY(EditAnywhere, Category=WeaponData)
 	TSubclassOf<UHonkWeaponComponent> FiringMechanism;
 	UPROPERTY(EditAnywhere, Category=WeaponStats)
+	float MaxRPM;
+	UPROPERTY(EditAnywhere, Category=WeaponStats)
 	float RPM;
 	UPROPERTY(EditAnywhere, Category=WeaponStats)
 	float TurnRate;

@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "HonkWeaponComponent.h"
-#include "MachineGun.generated.h"
+#include "MiniGun.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HONK_API UMachineGun : public UHonkWeaponComponent
+class HONK_API UMiniGun : public UHonkWeaponComponent
 {
 	GENERATED_BODY()
 	
-private:
+private:	
 	void Fire(float dTime) override;
 
 };

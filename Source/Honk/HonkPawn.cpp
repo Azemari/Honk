@@ -220,6 +220,7 @@ void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
 			    WeaponInstance = NewObject<UHonkWeaponComponent>(this, weaponComp, weaponComp->GetFName());
 				WeaponInstance->RegisterComponent();
 				WeaponInstance->Initialise(EndOfBarrel, WeaponAsset->Weapons[weapon].ProjectileName);
+				WeaponInstance->SetMaxRPM(WeaponAsset->Weapons[weapon].WeaponStats.MaxRPM);
 				WeaponInstance->SetRPM(WeaponAsset->Weapons[weapon].WeaponStats.RPM);
 				WeaponInstance->SetChargeSpeed(WeaponAsset->Weapons[weapon].WeaponStats.ChargeSpeed);
                 UE_LOG(LogTemp, Warning, TEXT("Weapon Instance: %s"), ((WeaponInstance != nullptr) ? TEXT("SUCCEEDED") : TEXT("FAILED")))

@@ -23,9 +23,10 @@ public:
 
     void SetTriggerStatus(bool status);
 
-    void SetRPM(float newRPM) { RPM = newRPM; FireRate = 1/(RPM/60);}
-    void SetTurnRate(float newTurnRate) { TurnRate = newTurnRate;}
-    void SetChargeSpeed(float newChargeSpeed){ ChargeSpeed = newChargeSpeed;}
+    void SetMaxRPM(float newMaxRPM) {MaxRPM = newMaxRPM; MaxFireRate = 1/(MaxRPM/60); }
+    void SetRPM(float newRPM) { RPM = newRPM; FireRate = 1/(RPM/60); }
+    void SetTurnRate(float newTurnRate) { TurnRate = newTurnRate; }
+    void SetChargeSpeed(float newChargeSpeed) { ChargeSpeed = newChargeSpeed; }
 
 protected:
 	// Called when the game starts
@@ -35,12 +36,14 @@ protected:
     class UProjectileAsset* ProjectileAsset = nullptr;
 
     // Manage the fire rate
+    float MaxFireRate;
     float FireRate;
     float LastFired;
     UPROPERTY()
     bool  Firing;
 
     // Weapon stats, set in the Weapons data asset
+    float MaxRPM;
 	float RPM;
 	float TurnRate;
 	float ChargeSpeed;

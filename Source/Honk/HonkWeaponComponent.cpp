@@ -33,6 +33,7 @@ void UHonkWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();	
 
+    MaxFireRate = 1/(MaxRPM/60);
     FireRate = 1/(RPM/60);
     LastFired = 0.0f;
     Firing = false;
