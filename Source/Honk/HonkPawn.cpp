@@ -9,8 +9,10 @@
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "HonkArmourDrop.h"
 #include "HonkGameInstance.h"
 #include "HonkGameMode.h"
+#include "HonkWeaponDrop.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealMathUtility.h"
 #include "UnrealMathVectorConstants.h"
@@ -90,6 +92,7 @@ void AHonkPawn::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Ot
 		}
 		else
 		{
+			if(!Cast<AHonkProjectile>(OtherActor) && !Cast<AHonkWeaponDrop>(OtherActor) && !Cast<AHonkArmourDrop>(OtherActor))
 			MovComp->CollideWithWall(OtherActor, SweepResult);
 		}
 	}
