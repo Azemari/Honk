@@ -19,10 +19,11 @@ AHonkProjectile::AHonkProjectile()
 	ProjectileMesh->SetupAttachment(Root);
 }
 
-void AHonkProjectile::Initialise(UStaticMesh* mesh, float speed, FVector scale) 
+void AHonkProjectile::Initialise(UStaticMesh* mesh, float speed, float damage, FVector scale) 
 {
 	ProjectileMesh->SetStaticMesh(mesh);
 	Speed = speed;
+	Damage = damage;
 	ProjectileMesh->SetRelativeScale3D(scale);
 }
 
@@ -49,7 +50,7 @@ void AHonkProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		//else if player, do damage
 		else if (AHonkPawn* player = Cast<AHonkPawn>(OtherActor))
 		{
-			//do damage stuff
+			player->TakeDamage(Damage);
 			Destroy();
 		}
 	}

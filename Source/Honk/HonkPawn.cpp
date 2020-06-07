@@ -63,6 +63,16 @@ AHonkPawn::AHonkPawn()
     WeaponMesh->SetupAttachment(WeaponMount);;
 
 	SetWeapon(TEXT("MachineGun"), true);
+
+
+	respawnPoints.Add(FVector(700,-1400,-4));
+	respawnRotations.Add(FRotator(0,-135,0));
+	respawnPoints.Add(FVector(700,1400,-4));
+	respawnRotations.Add(FRotator(0,-225,0));
+	respawnPoints.Add(FVector(-700,-1400,-4));
+	respawnRotations.Add(FRotator(0,-45,0));
+	respawnPoints.Add(FVector(-700,1400,-4));
+	respawnRotations.Add(FRotator(0,45,0));
 }
 
 // Called when the game starts or when spawned
@@ -358,11 +368,9 @@ void AHonkPawn::DestroyAndRespawnPawn(float DeltaTime)
 		}
 		else
 		{
-			int32 index = FMath::RandRange(0, SpawnPoints.Num()-1);
-			this->SetActorLocation(FVector(700,-1400,-4));
-			//this->SetActorLocation(SpawnPoints[index]->GetPosition());
-			//this->SetActorRotation(SpawnPoints[index]->GetRotation());
-
+			int32 index = FMath::RandRange(0, respawnPoints.Num()-1);
+			this->SetActorLocation(respawnPoints[index]);
+			this->SetActorRotation(respawnRotations[index]);
 			CurrentDelay = RespawnDelay;
 			Respawn = false;
 		}

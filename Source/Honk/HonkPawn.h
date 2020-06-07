@@ -84,6 +84,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float RespawnDelay = 5;
 	float CurrentDelay = 5;
+	TArray<FVector> respawnPoints;
+	TArray<FRotator> respawnRotations;
 
 	UPROPERTY(EditDefaultsOnly)
 	int NumLives = 3;
@@ -100,6 +102,8 @@ public:
 	int MaxHealthTier2 = 133;
 	UPROPERTY(EditDefaultsOnly)
 	int MaxHealthTier3 = 200;
+	UFUNCTION()
+	void TakeDamage(float value){ health -= value; }
 
 
 private:

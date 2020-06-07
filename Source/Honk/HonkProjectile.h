@@ -19,7 +19,7 @@ class HONK_API AHonkProjectile : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AHonkProjectile();
-	void Initialise(UStaticMesh* mesh, float speed, FVector scale);
+	void Initialise(UStaticMesh* mesh, float speed, float damage, FVector scale);
 	
 
 	USceneComponent* Root;
@@ -38,4 +38,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere)
 	float Speed = 1;
+	float Damage;
 };

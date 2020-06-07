@@ -13,7 +13,7 @@ void UMachineGun::Fire(float dTime)
 	    				 Barrel->GetComponentLocation(),
 	    				 Barrel->GetComponentRotation(),
                          spawnParams);
-        projectile->Initialise(ProjectileBP.ProjectileMesh, ProjectileBP.speed, ProjectileBP.Scale);
+        projectile->Initialise(ProjectileBP.ProjectileMesh, ProjectileBP.speed, ProjectileBP.damage, ProjectileBP.Scale);
         projectile->ProjectileMesh->SetRelativeRotation(FRotator(0,-90,0));
         LastFired = FireRate;
     }
