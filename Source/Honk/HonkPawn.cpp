@@ -216,7 +216,13 @@ void AHonkPawn::SetWeapon(FName weapon, bool inConstructor)
 
             if (!inConstructor)
             {
-			    TSubclassOf<UHonkWeaponComponent> weaponComp = WeaponAsset->Weapons[weapon].WeaponStats.FiringMechanism;
+			    if (WeaponInstance != nullptr)
+				{
+					WeaponInstance->SetTriggerStatus(false);
+					WeaponInstance->DestroyComponent();
+				}
+
+				TSubclassOf<UHonkWeaponComponent> weaponComp = WeaponAsset->Weapons[weapon].WeaponStats.FiringMechanism;
 			    WeaponInstance = NewObject<UHonkWeaponComponent>(this, weaponComp, weaponComp->GetFName());
 				WeaponInstance->RegisterComponent();
 				WeaponInstance->Initialise(EndOfBarrel, WeaponAsset->Weapons[weapon].ProjectileName);

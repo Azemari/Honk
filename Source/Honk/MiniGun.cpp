@@ -19,16 +19,22 @@ void UMiniGun::Fire(float dTime)
         //Accelerate fire rate
         if (FireRate >= (1/(MaxRPM/60)))
         {
-           FireRate -= 0.05f;
+           FireRate -= (3.0f * dTime);
+
+           if (FireRate < (1/(MaxRPM/60)))
+           {
+               FireRate = 1/(MaxRPM/60);
+           }
         }
 
-        UE_LOG(LogTemp, Warning, TEXT("Fire rate = %f"), FireRate);
+        UE_LOG(LogTemp, Warning, TEXT("+Fire rate = %f"), FireRate);
         LastFired = FireRate;
     }
     //Decelerate fire rate
-    else if (!Firing && FireRate > (1/(RPM/60)))
+    else if (!Firing && FireRate < (1/(RPM/60)))
     {
-        FireRate -= dTime;
+        FireRate += (0.5f * dTime);
+        UE_LOG(LogTemp, Warning, TEXT("-Fire rate = %f"), FireRate);
     }
 
     if(LastFired > 0.0f)
