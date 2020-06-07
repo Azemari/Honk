@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Components/StaticMeshComponent.h"
+#include "HonkExplosion.h"
 
 
 
@@ -29,6 +30,8 @@ struct FProjectileBlueprint
 	float range;
 	UPROPERTY(EditAnywhere, Category=ProjectileData)
 	float ExplosionRange;
+	UPROPERTY(EditAnywhere, Category=ProjectileData)
+	TSubclassOf<AHonkExplosion> ExplosionClass;
 };
 
 UCLASS()

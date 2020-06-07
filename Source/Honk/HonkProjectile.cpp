@@ -41,15 +41,18 @@ void AHonkProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		//stop when hitting walls
 		if (ATyreWall* tyreWall = Cast<ATyreWall>(OtherActor))
 		{
+			OnDetonate.Broadcast(this);
 			Destroy();
 		}
 		else if(AArenaCollider* arena = Cast<AArenaCollider>(OtherActor))
 		{
+			OnDetonate.Broadcast(this);
 			Destroy();
 		}
 		//else if player, do damage
 		else if (AHonkPawn* player = Cast<AHonkPawn>(OtherActor))
 		{
+			OnDetonate.Broadcast(this);
 			player->TakeDamage(Damage);
 			Destroy();
 		}

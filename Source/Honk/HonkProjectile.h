@@ -9,7 +9,11 @@
 #include "TyreWall.h"
 #include "ArenaCollider.h"
 
+#include "Delegate.h"
+
 #include "HonkProjectile.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProjectileDetonation, class AHonkProjectile*, projectile);
 
 UCLASS()
 class HONK_API AHonkProjectile : public AActor
@@ -20,7 +24,6 @@ public:
 	// Sets default values for this actor's properties
 	AHonkProjectile();
 	void Initialise(UStaticMesh* mesh, float speed, float damage, FVector scale);
-	
 
 	USceneComponent* Root;
 	UPROPERTY(EditAnywhere, Category = "Components")
@@ -39,4 +42,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Speed = 1;
 	float Damage;
+
+	FOnProjectileDetonation OnDetonate;
 };
