@@ -14,16 +14,11 @@ class HONK_API AGameManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGameManager();
-	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	UPROPERTY(EditAnywhere, meta = (ClampMin = 1, ClampMax = 4))
-	int PlayerCount = 2;
-
-	
+	void SpawnPlayers() const;
 
 };

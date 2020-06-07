@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameManager.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "HonkGameInstance.h"
+#include "HonkMenuHUD.h"
 
 // Sets default values
 AGameManager::AGameManager()
@@ -15,19 +18,20 @@ AGameManager::AGameManager()
 void AGameManager::BeginPlay()
 {
 	Super::BeginPlay();
-	for (int i = 0; i < PlayerCount; i++)
-	{
-		if (UWorld* World = GetWorld())
-		{
-			APlayerController* PC = UGameplayStatics::CreatePlayer((UObject*)World, i, true);
-		}
-	}
+	SpawnPlayers();
 }
 
-// Called every frame
-void AGameManager::Tick(float DeltaTime)
+void AGameManager::SpawnPlayers() const
 {
-	Super::Tick(DeltaTime);
-
+	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
+	{
+		for (int i = 0; i < GI->GetNumPlayers(); i++)
+		{
+			if (UWorld* World = GetWorld())
+			{
+				APlayerController* PC = UGameplayStatics::CreatePlayer((UObject*)World, i, true);
+			}
+		}
+	}
 }
 
