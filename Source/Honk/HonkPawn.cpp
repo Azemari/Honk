@@ -8,6 +8,9 @@
 #include "Components/InputComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "HonkGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "UnrealMathUtility.h"
 #include "UnrealMathVectorConstants.h"
 
@@ -45,8 +48,8 @@ AHonkPawn::AHonkPawn()
 	CarMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Car Mesh"));
 	CarMesh->SetupAttachment(RootComp);
 
-	CarName = TEXT("Camero");
-	SetCar(CarName, 0);
+	//CarName = TEXT("Camero");
+	//SetCar(CarName, 0);
 
 	// Loading initial weapon asset and meshes (Machine gun)
 	static ConstructorHelpers::FObjectFinder<UHonkWeaponAsset> WeaponData(TEXT("/Game/DataAssets/Weapons"));
@@ -65,6 +68,13 @@ void AHonkPawn::BeginPlay()
 	Super::BeginPlay();
 	CollisionComponent->SetGenerateOverlapEvents(true);
 	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AHonkPawn::OnOverlapBegin);
+
+	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
+	{
+		FString CarString = GI->GetPlayerCar(UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController())));
+		CarName = FName(*CarString);
+		SetCar(CarName, 0);
+	}
 
 	SetWeapon(TEXT("MachineGun"));
 }

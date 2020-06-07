@@ -7,6 +7,7 @@
 
 void UOptionsWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
 	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
 	{
 		if (GI->GetNumPlayers() > 0 && GI->GetNumPlayers() < 5)
@@ -20,15 +21,64 @@ void UOptionsWidget::NativeConstruct()
 		}
 	}
 
-	FScriptDelegate Delegate;
-	Delegate.BindUFunction(this, FName("OnPlayerCountUpdated"));
-	PlayerCount->OnSelectionChanged.Add(Delegate);
+	PlayerOneCar->SetSelectedIndex(4);
+	PlayerTwoCar->SetSelectedIndex(4);
+	PlayerThreeCar->SetSelectedIndex(4);
+	PlayerFourCar->SetSelectedIndex(4);
+
+	FScriptDelegate PlayerCountDelegate;
+	PlayerCountDelegate.BindUFunction(this, FName("OnPlayerCountUpdated"));
+	PlayerCount->OnSelectionChanged.Add(PlayerCountDelegate);
+
+	FScriptDelegate PlayerCarDelegate;
+	PlayerCarDelegate.BindUFunction(this, FName("UpdateAllPlayerCars"));
+	PlayerOneCar->OnSelectionChanged.Add(PlayerCarDelegate);
+	PlayerTwoCar->OnSelectionChanged.Add(PlayerCarDelegate);
+	PlayerThreeCar->OnSelectionChanged.Add(PlayerCarDelegate);
+	PlayerFourCar->OnSelectionChanged.Add(PlayerCarDelegate);
 }
 
-void UOptionsWidget::OnPlayerCountUpdated(FString SelectedItem, ESelectInfo::Type SelectionType) const
+void UOptionsWidget::OnPlayerCountUpdated(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
 	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
 	{
 		GI->SetNumPlayers(PlayerCount->GetSelectedIndex() + 1);
+		DisplayAppropriateCarSelectors(PlayerCount->GetSelectedIndex() + 1);
+	}
+}
+
+void UOptionsWidget::DisplayAppropriateCarSelectors(int Players)
+{
+	//there must be at least one player
+	PlayerOneCar->SetVisibility(ESlateVisibility::Visible);
+
+	PlayerTwoCar->SetVisibility(ESlateVisibility::Hidden);
+	PlayerThreeCar->SetVisibility(ESlateVisibility::Hidden);
+	PlayerFourCar->SetVisibility(ESlateVisibility::Hidden);
+
+	if (Players > 1)
+	{
+		PlayerTwoCar->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (Players > 2)
+	{
+		PlayerThreeCar->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (Players > 3)
+	{
+		PlayerFourCar->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UOptionsWidget::UpdateAllPlayerCars(FString UnusedString, ESelectInfo::Type UnusedSelectInfo) const
+{
+	if (UHonkGameInstance* GI = Cast<UHonkGameInstance>(GetGameInstance()))
+	{
+		GI->SetPlayerCar(0, PlayerOneCar->GetSelectedOption());
+		GI->SetPlayerCar(1, PlayerTwoCar->GetSelectedOption());
+		GI->SetPlayerCar(2, PlayerThreeCar->GetSelectedOption());
+		GI->SetPlayerCar(3, PlayerFourCar->GetSelectedOption());
 	}
 }

@@ -17,6 +17,7 @@ AHonkGameMode::AHonkGameMode()
 
 void AHonkGameMode::BeginPlay()
 { 	
+	Super::BeginPlay();
 }
 
 AActor* AHonkGameMode::ChoosePlayerStart_Implementation(AController* Player)

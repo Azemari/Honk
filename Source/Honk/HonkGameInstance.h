@@ -15,11 +15,20 @@ class HONK_API UHonkGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+
+	virtual void Init() override;
+
 	UFUNCTION(BlueprintCallable)
 	void SetNumPlayers(int PlayerNum) { PlayerCount = PlayerNum; }
 	UFUNCTION(BlueprintCallable)
 	int GetNumPlayers() { return PlayerCount; }
 
+	UFUNCTION()
+	void SetPlayerCar(int PlayerNum, FString CarName);
+	UFUNCTION()
+	FString GetPlayerCar(int PlayerNum);
+
 private:
 	int PlayerCount = 2;
+	TArray<FString> PlayerCars;
 };
