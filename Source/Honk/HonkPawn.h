@@ -107,6 +107,8 @@ public:
 
 	UPROPERTY()
 	FName WeaponName = TEXT("MachineGun");
+
+	float index;
 private:
 	// Scene positional components
     UPROPERTY(VisibleAnywhere)

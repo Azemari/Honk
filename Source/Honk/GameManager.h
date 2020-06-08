@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameHudWidget.h"
+#include "HonkPawn.h"
 
 #include "GameManager.generated.h"
 
@@ -30,4 +31,6 @@ protected:
 private:
 	UPROPERTY()
 	UGameHudWidget* HUDWidget = nullptr;
+
+	TArray<AHonkPawn*> players;
 };

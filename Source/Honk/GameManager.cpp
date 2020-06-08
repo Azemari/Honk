@@ -4,7 +4,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "HonkGameInstance.h"
-#include "HonkPawn.h"
+
 #include "HonkMenuHUD.h"
 
 // Sets default values
@@ -23,7 +23,7 @@ void AGameManager::Tick(float DeltaTime)
 	{
 		if (AHonkPawn* cast = Cast<AHonkPawn>(actors[i]))
 		{
-			HUDWidget->UpdatePlayer(cast->NumLives, cast->health, cast->WeaponName, i);
+			HUDWidget->UpdatePlayer(cast->NumLives, cast->health, cast->WeaponName, cast->index);
 		}
 	}
 }
@@ -44,7 +44,9 @@ void AGameManager::BeginPlay()
 			{
 				if (AHonkPawn* cast = Cast<AHonkPawn>(actors[i]))
 				{
-					HUDWidget->AddPlayer(cast->NumLives, cast->health, cast->WeaponName, i);
+					players.Add(cast);
+					cast->index = i;
+					HUDWidget->AddPlayer(cast->NumLives, cast->health, cast->WeaponName, cast->index);
 				}
 			}
 			HUDWidget->AddToViewport();
